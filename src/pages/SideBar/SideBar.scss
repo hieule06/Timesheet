@@ -1,0 +1,27 @@
+.wrapper-sidebar {
+  height: calc(100% - 70px - 86px - 70px);
+}
+
+/* Ẩn thanh cuộn khi không hover */
+.sidebar::-webkit-scrollbar {
+  width: 4px; /* Độ rộng của thanh cuộn */
+}
+
+/* Hiển thị thanh cuộn khi hover */
+.sidebar::-webkit-scrollbar:hover {
+  width: 4px; /* Độ rộng của thanh cuộn */
+}
+
+/* Ẩn mũi tên cuộn */
+.sidebar::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Ẩn thanh cuộn khi không hover */
+.sidebar::-webkit-scrollbar-track {
+  background-color: transparent; /* Màu nền của thanh cuộn */
+}
+
+.sidebar:hover::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+}
