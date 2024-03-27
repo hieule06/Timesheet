@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { ButtonControl } from "../Button/Button";
 import "./Modal.scss";
+import { ArrayTypeTask } from "../../constants/ArrayTypeTask";
 
 interface ModalProps {
   isOpen: boolean;
@@ -59,12 +60,11 @@ export const Modal: React.FC<ModalProps> = (props) => {
               inputProps={{ "aria-label": "Without label" }}
               variant="standard"
             >
-              <MenuItem value="">
-                <b className="text-sm font-normal">None</b>
-              </MenuItem>
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {ArrayTypeTask.map((item) => (
+                <MenuItem value={item.type} className="!text-sm">
+                  {item.titleTask}
+                </MenuItem>
+              ))}
             </Select>
           </div>
         </DialogContent>

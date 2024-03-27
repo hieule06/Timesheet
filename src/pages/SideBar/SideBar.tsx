@@ -30,9 +30,8 @@ export const SideBar: React.FC<SideBarProps> = (props) => {
           <ul className="space-y-2 font-medium">
             {ListSubMenu.map((item, index) => {
               return (
-                <li>
+                <li key={index}>
                   <ItemSideBar
-                    key={index}
                     icon={item.icon}
                     title={item.title}
                     subChildren={item.subChildren}

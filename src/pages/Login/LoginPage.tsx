@@ -2,45 +2,57 @@ import Person from "@mui/icons-material/Person";
 import { Box, TextField } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import { useState } from "react";
-import { loginAPI } from "../services/Auth";
-import axios from "axios";
+import { loginAPI } from "../../services/Auth";
+import axiosClient from "../../services/axiosClient";
+import "./LoginPage.scss";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [formLogin, setFormLogin] = useState({
     nameOrEmail: "",
     passWord: ""
   });
+  const navigate = useNavigate();
 
   const handleOnChange = (e: { target: { name: string; value: string } }) => {
     setFormLogin({ ...formLogin, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    await loginAPI(formLogin.nameOrEmail, formLogin.passWord);
+    const result = await loginAPI(formLogin.nameOrEmail, formLogin.passWord);
+    window.location.href = "/task";
   };
 
   const handleData = async () => {
-    const abc = await axios.get("https://training-api-timesheet.nccsoft.vn", {
-      url: "/api/services/app/Task/GetAll"
-    });
-    console.log("first: ", abc);
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      throw new Error("Token not found");
+    }
+
+    // Gửi yêu cầu để lấy dữ liệu người dùng
+    try {
+      const response = await axiosClient.get("/api/services/app/Task/GetAll");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <section className="bg-[#00bcd4] dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <section className="wrapper-login-page bg-[#00bcd4] dark:bg-gray-900">
+      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen">
         <a
           href="#"
           className="flex items-center mb-6 text-4xl font-semibold text-white dark:text-white"
         >
           Timesheet
         </a>
-        <div className="bg-white shadow md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-4 space-y-4 md:space-y-6 sm:p-5">
-            <h4 className="text-center text-[#555] font-semibold text-lg md:text-2xl dark:text-white my-[10px]">
+        <div className="bg-white shadow mt-0 max-w-md dark:bg-gray-800 dark:border-gray-700">
+          <div className="space-y-6 p-5">
+            <h4 className="text-center text-[#555] font-semibold text-2xl dark:text-white my-[10px]">
               Log in
             </h4>
-            <form className="space-y-4 md:space-y-6 w-[320px]" action="#">
+            <form className="space-y-6 w-[320px]" action="#">
               <div>
                 <div className="relative h-11 w-full">
                   <Box sx={{ display: "flex", alignItems: "end", gap: 2 }}>
@@ -101,8 +113,13 @@ const LoginPage = () => {
                 </div>
                 <button
                   type="submit"
-                  className="text-sm bg-[#e0e0e0] hover:bg-pink-500 text-white py-2 px-4 rounded"
+                  className={`text-sm bg-[#e0e0e0] ${
+                    formLogin.nameOrEmail && formLogin.passWord && "bg-pink-500"
+                  } text-white py-2 px-4 rounded`}
                   onClick={handleSubmit}
+                  disabled={
+                    formLogin.nameOrEmail && formLogin.passWord ? false : true
+                  }
                 >
                   Log in
                 </button>

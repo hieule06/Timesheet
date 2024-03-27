@@ -73,7 +73,7 @@ const ProjectPage = () => {
                     )
                   }}
                   InputLabelProps={{
-                    shrink: focused || currentValue,
+                    shrink: focused || !!currentValue,
                     style: { marginLeft: 30 }
                   }}
                   value={currentValue}
@@ -93,6 +93,18 @@ const ProjectPage = () => {
                   </tr>
                 </thead>
                 <tbody>
+                  <tr className="flex justify-between items-center bg-white border-b">
+                    <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
+                      <b className="text-sm text-[#555] font-normal">Coding</b>
+                    </th>
+                    <td className="px-[5px]">
+                      <ButtonControl
+                        handleCancel={() => {}}
+                        handleSave={() => {}}
+                        title={"Delete"}
+                      />
+                    </td>
+                  </tr>
                   <tr className="flex justify-between items-center bg-white border-b">
                     <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
                       <b className="text-sm text-[#555] font-normal">Coding</b>

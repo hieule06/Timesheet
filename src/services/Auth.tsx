@@ -1,21 +1,21 @@
-import axios from "axios";
-
-const api = "https://training-api-timesheet.nccsoft.vn/api/";
+import axiosClient from "./axiosClient";
 
 export const loginAPI = async (
   userNameOrEmailAddress: string,
   password: string
 ) => {
   try {
-    const response = await axios.post(api + "TokenAuth/Authenticate", {
+    const response = await axiosClient.post("/api/TokenAuth/Authenticate", {
       userNameOrEmailAddress,
       password
     });
     if (response && response.data && response.data.result.accessToken) {
       // Lưu token vào localStorage
-      localStorage.setItem("AuthToken", response.data.result.accessToken);
+      localStorage.setItem("accessToken", response.data.result.accessToken);
+      return response;
     }
   } catch (error) {
     console.log(error);
+    return error;
   }
 };
