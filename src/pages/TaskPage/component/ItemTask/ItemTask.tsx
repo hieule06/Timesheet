@@ -1,9 +1,12 @@
 import React from "react";
 import { ButtonControl } from "../../../../components/Button/Button";
+import { DataItemProp } from "../../../../type/DataItemProp";
 
 interface ItemTaskProps {
   name: string;
   handleIsOpen: () => void;
+  handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
+  dataItem: DataItemProp | undefined;
 }
 
 export const ItemTask: React.FC<ItemTaskProps> = (props) => {
@@ -15,6 +18,8 @@ export const ItemTask: React.FC<ItemTaskProps> = (props) => {
             handleCancel={props.handleIsOpen}
             handleSave={() => {}}
             title={"Edit"}
+            handleGetDataModal={(item) => props.handleGetDataModal(item)}
+            dataItem={props.dataItem}
           />
           <b className="text-sm text-[#555] font-normal">{props.name}</b>
         </th>
@@ -23,11 +28,15 @@ export const ItemTask: React.FC<ItemTaskProps> = (props) => {
             handleCancel={() => {}}
             handleSave={() => {}}
             title={"Archive"}
+            handleGetDataModal={(item) => props.handleGetDataModal(item)}
+            dataItem={undefined}
           />
           <ButtonControl
             handleCancel={() => {}}
             handleSave={() => {}}
             title={"Delete"}
+            handleGetDataModal={(item) => props.handleGetDataModal(item)}
+            dataItem={undefined}
           />
         </td>
       </tr>

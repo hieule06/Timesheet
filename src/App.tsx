@@ -22,7 +22,10 @@ const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route path={"/login"} element={<LoginPage />} />
+        <Route
+          path={"/login"}
+          element={isLoggedIn ? <Navigate to="/task" /> : <LoginPage />}
+        />
         <Route
           path={"/" || "/login"}
           element={

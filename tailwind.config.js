@@ -4,7 +4,8 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: "#fb483a" // Thay đổi 'blue' thành màu chủ đạo bạn muốn sử dụng
+        primary: "#fb483a", // Thay đổi 'blue' thành màu chủ đạo bạn muốn sử dụng
+        secondary: "#f24b50"
       },
       screens: {
         table: "1024px" // Thêm kích thước màn hình 'table' với độ rộng 1200px

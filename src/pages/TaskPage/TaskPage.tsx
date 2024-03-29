@@ -4,30 +4,48 @@ import { TaskList } from "./component/TaskList/TaskList";
 import Modal from "../../components/Modal/Modal";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
 import { ControlTask } from "./component/ControlTask";
+import { DataItemProp } from "../../type/DataItemProp";
+import { createOrUpdateTask } from "../../services/TaskServices/taskServices";
+import React from "react";
 
 const TaskPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
   const [currentValue, setCurrentValue] = useState("");
+  const [dataModal, setDataModal] = useState<Partial<DataItemProp> | undefined>(
+    undefined
+  );
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: ""
-  });
 
   const handleIsOpen = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleGetDataModal = (item: Partial<DataItemProp> | undefined) => {
+    setDataModal(item);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
+    setDataModal({
+      ...dataModal,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Xử lý dữ liệu biểu mẫu ở đây, ví dụ: gửi dữ liệu đến server
-    console.log(formData);
+    if (!dataModal?.type) {
+      setDataModal({
+        ...dataModal,
+        ["type"]: 0
+      });
+    }
+    if (dataModal?.id) {
+      await createOrUpdateTask(dataModal);
+      setIsOnKeyDown(!isOnKeyDown);
+    } else {
+      await createOrUpdateTask({ ...dataModal, isDeleted: true, id: 0 });
+      setIsOnKeyDown(!isOnKeyDown);
+    }
     // Đóng dialog
     handleIsOpen();
   };
@@ -55,6 +73,7 @@ const TaskPage = () => {
               handleIsOpen={handleIsOpen}
               currentValue={currentValue}
               isOnKeyDown={isOnKeyDown}
+              handleGetDataModal={(item) => handleGetDataModal(item)}
             />
           </div>
           <Modal
@@ -62,6 +81,8 @@ const TaskPage = () => {
             handleIsOpen={handleIsOpen}
             handleSubmit={handleSubmit}
             handleChange={(e) => handleChange(e)}
+            dataItemProp={dataModal}
+            handleGetDataModal={(item) => handleGetDataModal(item)}
           />
         </div>
       </div>

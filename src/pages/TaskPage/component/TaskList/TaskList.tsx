@@ -4,22 +4,18 @@ import { ItemTask } from "../ItemTask/ItemTask";
 import { getAllTasks } from "../../../../services/TaskServices/taskServices";
 import { TypeTask } from "../TypeTask/TypeTask";
 import { ArrayTypeTask } from "../../../../constants/ArrayTypeTask";
+import { DataItemProp } from "../../../../type/DataItemProp";
 
 interface TaskListProps {
   handleIsOpen: () => void;
   currentValue: string;
   isOnKeyDown: boolean;
-}
-interface Task {
-  name: string;
-  type: number;
-  isDeleted: boolean;
-  id: number;
+  handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
 }
 
 export const TaskList: React.FC<TaskListProps> = (props) => {
-  const [listTaskCommon, setListTaskCommon] = useState<Task[]>([]);
-  const [listTaskOther, setListTaskOther] = useState<Task[]>([]);
+  const [listTaskCommon, setListTaskCommon] = useState<DataItemProp[]>([]);
+  const [listTaskOther, setListTaskOther] = useState<DataItemProp[]>([]);
 
   // có thể dùng sau nếu nhiều type :
   // const uniqueTypes = tasksData.map((item: Task) => !arrTypeTask.includes(item.type) && arrTypeTask.push(item.type) )
@@ -28,11 +24,11 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
     try {
       const tasksData = await getAllTasks();
       if (tasksData && tasksData.result) {
-        const listDataCommon: React.SetStateAction<Task[]> = [];
-        const listDataOther: React.SetStateAction<Task[]> = [];
+        const listDataCommon: React.SetStateAction<DataItemProp[]> = [];
+        const listDataOther: React.SetStateAction<DataItemProp[]> = [];
         if (valueFilter) {
           const lowerCaseSearch = valueFilter.toLowerCase();
-          tasksData.result.map((item: Task) =>
+          tasksData.result.map((item: DataItemProp) =>
             item.name.toLowerCase().includes(lowerCaseSearch) && item.type === 0
               ? listDataCommon.push(item)
               : item.name.toLowerCase().includes(lowerCaseSearch) &&
@@ -43,7 +39,7 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
           setListTaskCommon(listDataCommon);
           setListTaskOther(listDataOther);
         } else {
-          tasksData.result.map((item: Task) =>
+          tasksData.result.map((item: DataItemProp) =>
             item.type === 0
               ? listDataCommon.push(item)
               : listDataOther.push(item)
@@ -97,6 +93,10 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                       key={itemTask.id}
                       name={itemTask.name}
                       handleIsOpen={props.handleIsOpen}
+                      handleGetDataModal={(item) =>
+                        props.handleGetDataModal(item)
+                      }
+                      dataItem={itemTask}
                     />
                   )
                 )}
