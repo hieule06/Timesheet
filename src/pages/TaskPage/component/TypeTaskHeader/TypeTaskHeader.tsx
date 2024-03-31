@@ -1,12 +1,12 @@
 import React from "react";
 
-interface TypeTaskProps {
+interface TypeTaskHeaderProps {
   title: string;
   description: string;
   numberElement: number;
 }
 
-export const TypeTask: React.FC<TypeTaskProps> = (props) => {
+export const TypeTaskHeader: React.FC<TypeTaskHeaderProps> = (props) => {
   return (
     <>
       {props.numberElement > 0 && (

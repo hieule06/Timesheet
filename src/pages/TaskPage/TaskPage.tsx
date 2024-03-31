@@ -10,7 +10,8 @@ import React from "react";
 
 const TaskPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
-  const [currentValue, setCurrentValue] = useState("");
+  const [isCreateOrUpdate, setIsCreateOrUpdate] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
   const [dataModal, setDataModal] = useState<Partial<DataItemProp> | undefined>(
     undefined
   );
@@ -41,10 +42,10 @@ const TaskPage = () => {
     }
     if (dataModal?.id) {
       await createOrUpdateTask(dataModal);
-      setIsOnKeyDown(!isOnKeyDown);
+      setIsCreateOrUpdate(!isCreateOrUpdate);
     } else {
       await createOrUpdateTask({ ...dataModal, isDeleted: true, id: 0 });
-      setIsOnKeyDown(!isOnKeyDown);
+      setIsCreateOrUpdate(!isCreateOrUpdate);
     }
     // Đóng dialog
     handleIsOpen();
@@ -59,11 +60,11 @@ const TaskPage = () => {
           <HeaderContainer title={"Manage Tasks"} />
           <div className="p-5">
             <ControlTask
-              currentValue={currentValue}
+              searchValue={searchValue}
               isOnKeyDown={isOnKeyDown}
               handleIsOpen={handleIsOpen}
-              setCurrentValue={(prev: SetStateAction<string>) =>
-                setCurrentValue(prev)
+              setSearchValue={(prev: SetStateAction<string>) =>
+                setSearchValue(prev)
               }
               setIsOnKeyDown={(
                 prev: boolean | ((prevState: boolean) => boolean)
@@ -71,8 +72,9 @@ const TaskPage = () => {
             />
             <TaskList
               handleIsOpen={handleIsOpen}
-              currentValue={currentValue}
+              searchValue={searchValue}
               isOnKeyDown={isOnKeyDown}
+              isCreateOrUpdate={isCreateOrUpdate}
               handleGetDataModal={(item) => handleGetDataModal(item)}
             />
           </div>

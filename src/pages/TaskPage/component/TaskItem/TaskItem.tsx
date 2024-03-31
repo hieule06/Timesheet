@@ -2,14 +2,14 @@ import React from "react";
 import { ButtonControl } from "../../../../components/Button/Button";
 import { DataItemProp } from "../../../../type/DataItemProp";
 
-interface ItemTaskProps {
+interface TaskItemProps {
   name: string;
   handleIsOpen: () => void;
   handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
   dataItem: DataItemProp | undefined;
 }
 
-export const ItemTask: React.FC<ItemTaskProps> = (props) => {
+export const TaskItem: React.FC<TaskItemProps> = (props) => {
   return (
     <>
       <tr className="flex justify-between items-center odd:bg-gray-50 odd:dark:bg-gray-800 even:bg-white even:dark:bg-gray-900 border-b dark:border-gray-700 hover:bg-[#f5f5f5]">

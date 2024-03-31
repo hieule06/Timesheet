@@ -3,16 +3,21 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import SearchIcon from "@mui/icons-material/Search";
 import { TextField } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
+import { useState } from "react";
 
 interface ControlTaskProps {
-  currentValue: string;
+  searchValue: string;
   isOnKeyDown: boolean;
   handleIsOpen: () => void;
-  setCurrentValue: React.Dispatch<React.SetStateAction<string>>;
+  setSearchValue: React.Dispatch<React.SetStateAction<string>>;
   setIsOnKeyDown: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const ControlTask: React.FC<ControlTaskProps> = (props) => {
+  const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
+  const handleOnForcus = () => {
+    setIsOnFocus(!isOnFocus);
+  };
   return (
     <div className="flex w-full">
       <div className="w-2/6">
@@ -43,11 +48,13 @@ export const ControlTask: React.FC<ControlTaskProps> = (props) => {
             )
           }}
           InputLabelProps={{
-            shrink: props.isOnKeyDown || !!props.currentValue,
+            shrink: isOnFocus || !!props.searchValue,
             style: { marginLeft: 30 }
           }}
-          value={props.currentValue}
-          onChange={(e) => props.setCurrentValue(e.target.value)}
+          value={props.searchValue}
+          onChange={(e) => props.setSearchValue(e.target.value)}
+          onFocus={handleOnForcus}
+          onBlur={handleOnForcus}
           onKeyDown={(e) => {
             if (e.keyCode == 13) {
               props.setIsOnKeyDown(!props.isOnKeyDown);

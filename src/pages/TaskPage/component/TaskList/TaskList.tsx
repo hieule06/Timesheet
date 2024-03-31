@@ -1,52 +1,61 @@
 import React, { useEffect, useState } from "react";
 import "./TaskList.scss";
-import { ItemTask } from "../ItemTask/ItemTask";
 import { getAllTasks } from "../../../../services/TaskServices/taskServices";
-import { TypeTask } from "../TypeTask/TypeTask";
-import { ArrayTypeTask } from "../../../../constants/ArrayTypeTask";
+import { TypeTaskHeader } from "../TypeTaskHeader/TypeTaskHeader";
+import { ArrayTypeTask } from "../../../../constants/task/ArrayTypeTask";
 import { DataItemProp } from "../../../../type/DataItemProp";
+import { TaskItem } from "../TaskItem/TaskItem";
+import { TYPE_TASK } from "../../../../constants/task/TypeTask";
 
 interface TaskListProps {
   handleIsOpen: () => void;
-  currentValue: string;
+  searchValue: string;
   isOnKeyDown: boolean;
+  isCreateOrUpdate: boolean;
   handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
 }
 
 export const TaskList: React.FC<TaskListProps> = (props) => {
   const [listTaskCommon, setListTaskCommon] = useState<DataItemProp[]>([]);
   const [listTaskOther, setListTaskOther] = useState<DataItemProp[]>([]);
+  const [checkSearchValue, setCheckSearchValue] = useState(""); // Giá trị search value chuyển về toLowerCase sau khi được enter
 
   // có thể dùng sau nếu nhiều type :
   // const uniqueTypes = tasksData.map((item: Task) => !arrTypeTask.includes(item.type) && arrTypeTask.push(item.type) )
 
-  const loadData = async (valueFilter: string | undefined) => {
+  const checkHiddenListTask = (TypeTask: { type: number }) =>
+    ((TypeTask.type === TYPE_TASK.COMMON_TYPE &&
+      listTaskCommon.filter((taskCommon) =>
+        taskCommon.name.toLowerCase().includes(checkSearchValue)
+      ).length <= 0) ||
+      (TypeTask.type === TYPE_TASK.OTHER_TYPE &&
+        listTaskOther.filter((taskCommon) =>
+          taskCommon.name.toLowerCase().includes(checkSearchValue)
+        ).length <= 0)) &&
+    "hidden";
+
+  const filterCommonLength = listTaskCommon.filter((taskCommon) =>
+    taskCommon.name.toLowerCase().includes(checkSearchValue)
+  ).length;
+
+  const filterOtherLength = listTaskOther.filter((taskOther) =>
+    taskOther.name.toLowerCase().includes(checkSearchValue)
+  ).length;
+
+  const loadData = async () => {
     try {
       const tasksData = await getAllTasks();
       if (tasksData && tasksData.result) {
         const listDataCommon: React.SetStateAction<DataItemProp[]> = [];
         const listDataOther: React.SetStateAction<DataItemProp[]> = [];
-        if (valueFilter) {
-          const lowerCaseSearch = valueFilter.toLowerCase();
-          tasksData.result.map((item: DataItemProp) =>
-            item.name.toLowerCase().includes(lowerCaseSearch) && item.type === 0
-              ? listDataCommon.push(item)
-              : item.name.toLowerCase().includes(lowerCaseSearch) &&
-                item.type === 1
-              ? listDataOther.push(item)
-              : undefined
-          );
-          setListTaskCommon(listDataCommon);
-          setListTaskOther(listDataOther);
-        } else {
-          tasksData.result.map((item: DataItemProp) =>
-            item.type === 0
-              ? listDataCommon.push(item)
-              : listDataOther.push(item)
-          );
-          setListTaskCommon(listDataCommon);
-          setListTaskOther(listDataOther);
-        }
+
+        tasksData.result.map((item: DataItemProp) =>
+          item.type === TYPE_TASK.COMMON_TYPE
+            ? listDataCommon.push(item)
+            : listDataOther.push(item)
+        );
+        setListTaskCommon(listDataCommon);
+        setListTaskOther(listDataOther);
       }
     } catch (error) {
       console.error("Error fetching tasks:", error);
@@ -54,29 +63,30 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
   };
 
   useEffect(() => {
-    if (props.currentValue) {
-      loadData(props.currentValue);
-    } else {
-      loadData(undefined);
-    }
+    loadData();
+  }, [props.isCreateOrUpdate]);
+
+  useEffect(() => {
+    setCheckSearchValue(props.searchValue.toLowerCase());
   }, [props.isOnKeyDown]);
+
   return (
     <>
-      {ArrayTypeTask.map((item, index) => (
+      {ArrayTypeTask.map((TypeTask, index) => (
         <React.Fragment key={index}>
-          <TypeTask
-            title={item.titleTask}
-            description={item.description}
+          <TypeTaskHeader
+            title={TypeTask.titleTask}
+            description={TypeTask.description}
             numberElement={
-              item.type === 0 ? listTaskCommon.length : listTaskOther.length
+              TypeTask.type === TYPE_TASK.COMMON_TYPE
+                ? filterCommonLength
+                : filterOtherLength
             }
           />
           <div
-            className={`wrapper-task-list grid gap-4 ${
-              ((item.type === 0 && listTaskCommon.length === 0) ||
-                (item.type === 1 && listTaskOther.length === 0)) &&
-              "hidden"
-            }`}
+            className={`wrapper-task-list grid gap-4 ${checkHiddenListTask(
+              TypeTask
+            )}`}
           >
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="p-[10px] pl-5 text-xs text-gray-700 uppercase dark:text-gray-400">
@@ -87,16 +97,31 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {(item.type === 0 ? listTaskCommon : listTaskOther).map(
-                  (itemTask) => (
-                    <ItemTask
-                      key={itemTask.id}
-                      name={itemTask.name}
+                {(TypeTask.type === TYPE_TASK.COMMON_TYPE
+                  ? listTaskCommon
+                  : listTaskOther
+                ).map((Task) =>
+                  checkSearchValue ? (
+                    Task.name.toLowerCase().includes(checkSearchValue) && (
+                      <TaskItem
+                        key={Task.id}
+                        name={Task.name}
+                        handleIsOpen={props.handleIsOpen}
+                        handleGetDataModal={(item) =>
+                          props.handleGetDataModal(item)
+                        }
+                        dataItem={Task}
+                      />
+                    )
+                  ) : (
+                    <TaskItem
+                      key={Task.id}
+                      name={Task.name}
                       handleIsOpen={props.handleIsOpen}
                       handleGetDataModal={(item) =>
                         props.handleGetDataModal(item)
                       }
-                      dataItem={itemTask}
+                      dataItem={Task}
                     />
                   )
                 )}
