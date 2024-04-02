@@ -110,7 +110,8 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                         handleGetDataModal={(item) =>
                           props.handleGetDataModal(item)
                         }
-                        dataItem={Task}
+                        dataItemTask={Task}
+                        loadDataTask={loadData}
                       />
                     )
                   ) : (
@@ -121,7 +122,8 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                       handleGetDataModal={(item) =>
                         props.handleGetDataModal(item)
                       }
-                      dataItem={Task}
+                      dataItemTask={Task}
+                      loadDataTask={loadData}
                     />
                   )
                 )}

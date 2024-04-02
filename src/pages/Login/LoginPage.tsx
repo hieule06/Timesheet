@@ -5,14 +5,12 @@ import { useState } from "react";
 import { loginAPI } from "../../services/Auth";
 import axiosClient from "../../services/axiosClient";
 import "./LoginPage.scss";
-import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
   const [formLogin, setFormLogin] = useState({
     nameOrEmail: "",
     passWord: ""
   });
-  const navigate = useNavigate();
 
   const handleOnChange = (e: { target: { name: string; value: string } }) => {
     setFormLogin({ ...formLogin, [e.target.name]: e.target.value });
@@ -58,7 +56,7 @@ const LoginPage = () => {
                   <Box sx={{ display: "flex", alignItems: "end", gap: 2 }}>
                     <Person className="text-[#555] !text-xl"></Person>
                     <TextField
-                      id="standard-basic"
+                      id="standard-basic1"
                       name="nameOrEmail"
                       label={
                         <span className="text-sm">
@@ -112,7 +110,7 @@ const LoginPage = () => {
                   </div>
                 </div>
                 <button
-                  type="submit"
+                  type="button"
                   className={`text-sm bg-[#e0e0e0] ${
                     formLogin.nameOrEmail && formLogin.passWord && "bg-pink-500"
                   } text-white py-2 px-4 rounded`}

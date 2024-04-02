@@ -12,8 +12,9 @@ import {
 } from "@mui/material";
 import { ButtonControl } from "../Button/Button";
 import "./Modal.scss";
-import { ArrayTypeTask } from "../../constants/ArrayTypeTask";
+import { ArrayTypeTask } from "../../constants/task/ArrayTypeTask";
 import { DataItemProp } from "../../type/DataItemProp";
+import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
 
 interface ModalProps {
   isOpen: boolean;
@@ -87,18 +88,18 @@ export const Modal: React.FC<ModalProps> = (props) => {
         </DialogContent>
         <DialogActions className="">
           <ButtonControl
-            title={"Cancel"}
-            handleCancel={props.handleIsOpen}
-            handleSave={() => props.handleGetDataModal(undefined)}
-            handleGetDataModal={() => {}}
-            dataItem={undefined}
+            title={TITLE_BUTTON.CANCEL}
+            dataItem={props.dataItemProp}
+            handleClick={() => {
+              props.handleIsOpen(), props.handleGetDataModal(undefined);
+            }}
           />
           <ButtonControl
-            title={"Save"}
-            handleCancel={() => props.handleGetDataModal(undefined)}
-            handleSave={props.handleSubmit}
-            handleGetDataModal={() => {}}
-            dataItem={undefined}
+            title={TITLE_BUTTON.SAVE}
+            dataItem={props.dataItemProp}
+            handleClick={() => {
+              props.handleSubmit(), props.handleGetDataModal(undefined);
+            }}
           />
         </DialogActions>
       </Dialog>

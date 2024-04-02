@@ -15,7 +15,7 @@ interface ControlTaskProps {
 
 export const ControlTask: React.FC<ControlTaskProps> = (props) => {
   const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
-  const handleOnForcus = () => {
+  const handleOnFocus = () => {
     setIsOnFocus(!isOnFocus);
   };
   return (
@@ -53,8 +53,8 @@ export const ControlTask: React.FC<ControlTaskProps> = (props) => {
           }}
           value={props.searchValue}
           onChange={(e) => props.setSearchValue(e.target.value)}
-          onFocus={handleOnForcus}
-          onBlur={handleOnForcus}
+          onFocus={handleOnFocus}
+          onBlur={handleOnFocus}
           onKeyDown={(e) => {
             if (e.keyCode == 13) {
               props.setIsOnKeyDown(!props.isOnKeyDown);

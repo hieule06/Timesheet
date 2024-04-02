@@ -7,6 +7,8 @@ import { ControlTask } from "./component/ControlTask";
 import { DataItemProp } from "../../type/DataItemProp";
 import { createOrUpdateTask } from "../../services/TaskServices/taskServices";
 import React from "react";
+import { TYPE_TASK } from "../../constants/task/TypeTask";
+import { Toast } from "../../constants/toast/Toast";
 
 const TaskPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
@@ -33,18 +35,47 @@ const TaskPage = () => {
   };
 
   const handleSubmit = async () => {
-    // Xử lý dữ liệu biểu mẫu ở đây, ví dụ: gửi dữ liệu đến server
     if (!dataModal?.type) {
       setDataModal({
         ...dataModal,
-        ["type"]: 0
+        ["type"]: TYPE_TASK.COMMON_TYPE
       });
     }
     if (dataModal?.id) {
-      await createOrUpdateTask(dataModal);
+      const result = await createOrUpdateTask(dataModal);
+      if (result && result.success) {
+        await Toast.fire({
+          icon: "success",
+          title: `Created Task : ${dataModal.name}`,
+          background: "#51a351"
+        });
+      } else {
+        await Toast.fire({
+          icon: "error",
+          title: `${result.response.data.error.message}`,
+          background: "#51a351"
+        });
+      }
       setIsCreateOrUpdate(!isCreateOrUpdate);
     } else {
-      await createOrUpdateTask({ ...dataModal, isDeleted: true, id: 0 });
+      const result = await createOrUpdateTask({
+        ...dataModal,
+        isDeleted: true,
+        id: 0
+      });
+      if (result && result.success) {
+        await Toast.fire({
+          icon: "success",
+          title: `Created Task : ${dataModal?.name}`,
+          background: "#51a351"
+        });
+      } else {
+        await Toast.fire({
+          icon: "error",
+          title: `${result.response.data.error.message}`,
+          background: "#51a351"
+        });
+      }
       setIsCreateOrUpdate(!isCreateOrUpdate);
     }
     // Đóng dialog
