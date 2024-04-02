@@ -41,6 +41,8 @@ const TaskPage = () => {
         ["type"]: TYPE_TASK.COMMON_TYPE
       });
     }
+    // Đóng dialog
+    handleIsOpen();
     if (dataModal?.id) {
       const result = await createOrUpdateTask(dataModal);
       if (result && result.success) {
@@ -78,8 +80,6 @@ const TaskPage = () => {
       }
       setIsCreateOrUpdate(!isCreateOrUpdate);
     }
-    // Đóng dialog
-    handleIsOpen();
   };
 
   useEffect(() => {});

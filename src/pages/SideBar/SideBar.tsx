@@ -11,16 +11,21 @@ interface SideBarProps {
 
 export const SideBar: React.FC<SideBarProps> = (props) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [idItemSideBar, setIdItemSideBar] = useState<string | undefined>();
 
   const handleToggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleGetIdItemSideBar = (idItem: string) => {
+    setIdItemSideBar(idItem);
   };
 
   return (
     <>
       <aside
         id="sidebar-multi-level-sidebar"
-        className={`wrapper-sidebar fixed top-0 left-0 z-40 w-[300px] mt-[70px] transition-transform table:translate-x-0 ${
+        className={`wrapper-sidebar fixed top-0 left-0 z-50 w-[300px] mt-[70px] transition-transform table:translate-x-0 ${
           props.isOpenSidebar ? "translate-x-0" : "-translate-x-full"
         }`}
         aria-label="Sidebar"
@@ -30,7 +35,7 @@ export const SideBar: React.FC<SideBarProps> = (props) => {
           <ul className="space-y-2 font-medium">
             {ListSubMenu.map((item, index) => {
               return (
-                <li key={index}>
+                <li key={index} className={` `}>
                   <ItemSideBar
                     icon={item.icon}
                     title={item.title}
@@ -39,6 +44,12 @@ export const SideBar: React.FC<SideBarProps> = (props) => {
                     handleToggleDropdown={handleToggleDropdown}
                     iconAddChildren={item.iconAddChildren}
                     iconRemoveChildren={item.iconRemoveChildren}
+                    id={item.id}
+                    handleGetIdItemSideBar={(idItem: string) =>
+                      handleGetIdItemSideBar(idItem)
+                    }
+                    idItemSideBar={idItemSideBar || ""}
+                    href={item.href}
                   ></ItemSideBar>
                 </li>
               );

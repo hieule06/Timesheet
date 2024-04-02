@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  faPlus,
-  faMinus,
-  faAngleRight
-} from "@fortawesome/free-solid-svg-icons";
+import { faPlus, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import GroupWorkIcon from "@mui/icons-material/GroupWork";
@@ -15,124 +11,134 @@ import DateRangeIcon from "@mui/icons-material/DateRange";
 import RuleIcon from "@mui/icons-material/Rule";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import GroupsIcon from "@mui/icons-material/Groups";
-import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 
 export interface SubMenuItem {
+  id: string;
   icon: React.ReactNode;
   title: string;
-  subChildren: React.ReactNode;
+  subChildren: boolean;
   iconAddChildren: React.ReactNode;
   iconRemoveChildren: React.ReactNode;
+  href: string;
 }
+
+interface SubItemSideBarProps {
+  id: string;
+  title: string;
+  href: string;
+}
+
+export const ListSubItemSidebar: SubItemSideBarProps[] = [
+  {
+    id: "2-1",
+    title: "Tasks",
+    href: "/task#"
+  },
+  {
+    id: "2-2",
+    title: "Billing",
+    href: ""
+  },
+  {
+    id: "2-3",
+    title: "Invoice",
+    href: ""
+  }
+];
 
 export const ListSubMenu: SubMenuItem[] = [
   {
+    id: "1",
     icon: <AccountBoxIcon className="text-[#747474]" />,
     title: "My profile",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "2",
     icon: <GroupWorkIcon className="text-[#747474]" />,
     title: "Admin",
-    subChildren: (
-      <ul
-        id="dropdown-example"
-        className="pl-5 space-y-2 font-normal text-[#747474]"
-      >
-        <li>
-          <a
-            href="#"
-            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >
-            <FontAwesomeIcon
-              className="text-[#f44a3d] font-bold mr-[6px]"
-              icon={faAngleRight}
-            />
-            <ImportContactsIcon className="mr-[6px] text-[#f44a3d]" />
-            Tasks
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >
-            Billing
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            className="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-          >
-            Invoice
-          </a>
-        </li>
-      </ul>
-    ),
+    subChildren: true,
     iconAddChildren: (
       <FontAwesomeIcon className="py-2 space-y-2" icon={faPlus} />
     ),
     iconRemoveChildren: (
       <FontAwesomeIcon className="py-2 space-y-2" icon={faMinus} />
-    )
+    ),
+    href: "/task#"
   },
   {
+    id: "3",
     icon: <AssignmentIcon className="text-[#747474]" />,
     title: "Projects",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: "/projects#"
   },
   {
+    id: "4",
     icon: <AccessAlarmIcon className="text-[#747474]" />,
     title: "My timesheets",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "5",
     icon: <EventBusyIcon className="text-[#747474]" />,
     title: "My request off/remote/onsite",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "6",
     icon: <TodayIcon className="text-[#747474]" />,
     title: "My working time",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "7",
     icon: <DateRangeIcon className="text-[#747474]" />,
     title: "Manage timesheet",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "8",
     icon: <RuleIcon className="text-[#747474]" />,
     title: "Manage request off/remote/onsite",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "9",
     icon: <AccessTimeIcon className="text-[#747474]" />,
     title: "Manage working times",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   },
   {
+    id: "10",
     icon: <GroupsIcon className="text-[#747474]" />,
     title: "Team working calendar",
-    subChildren: null,
+    subChildren: false,
     iconAddChildren: null,
-    iconRemoveChildren: null
+    iconRemoveChildren: null,
+    href: ""
   }
 ];
