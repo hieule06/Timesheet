@@ -4,5 +4,6 @@ export enum TITLE_BUTTON {
   EDIT = "Edit",
   ARCHIVE = "Archive",
   UNARCHIVE = "Unarchive",
-  DELETE = "Delete"
+  DELETE = "Delete",
+  ACTION = "Action"
 }

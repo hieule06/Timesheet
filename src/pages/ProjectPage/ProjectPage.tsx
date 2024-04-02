@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import "./ProjectPage.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
@@ -7,11 +7,23 @@ import { TextField } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import Modal from "../../components/Modal/Modal";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
+import { ProjectList } from "./component/ProjectList/ProjectList";
+import {
+  Dialog,
+  Tabs,
+  Tab,
+  Box,
+  DialogTitle,
+  IconButton,
+  Button
+} from "@mui/material";
 import { ButtonControl } from "../../components/Button/Button";
+import CloseIcon from "@mui/icons-material/Close";
+import { Checkbox, Form, Input, Select } from "antd";
 
 const ProjectPage = () => {
   const [focused, setFocused] = useState(false);
-  const [currentValue, setCurrentValue] = useState("");
+  const [searchValue, setSearchValue] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -35,6 +47,36 @@ const ProjectPage = () => {
     // Đóng dialog
     handleIsOpen();
   };
+
+  const [tabIndex, setTabIndex] = useState(0);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleTabChange = (event: any, newIndex: SetStateAction<number>) => {
+    setTabIndex(newIndex);
+  };
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const onChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onSearch = (value: string) => {
+    console.log("search:", value);
+  };
+
+  // Filter `option.label` match the user type `input`
+  const filterOption = (
+    input: string,
+    option?: { label: string; value: string }
+  ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
     <div>
@@ -73,62 +115,210 @@ const ProjectPage = () => {
                     )
                   }}
                   InputLabelProps={{
-                    shrink: focused || !!currentValue,
+                    shrink: focused || !!searchValue,
                     style: { marginLeft: 30 }
                   }}
-                  value={currentValue}
-                  onChange={(e) => setCurrentValue(e.target.value)}
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
                   onFocus={() => setFocused(true)}
                   onBlur={() => setFocused(false)}
                 />
               </div>
             </div>
-            <div className="wrapper-task-list grid gap-4">
-              <table className="w-full text-sm text-left bg-[#D3D3D3] rounded-[5px]">
-                <thead className="p-[10px] pl-5 text-lg font-bold text-[#555555]">
-                  <tr className="border-b dark:border-gray-700">
-                    <th scope="col" className="px-6 py-3">
-                      client1 api
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="flex justify-between items-center bg-white border-b">
-                    <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
-                      <b className="text-sm text-[#555] font-normal">Coding</b>
-                    </th>
-                    <td className="px-[5px]">
-                      <ButtonControl
-                        handleCancel={() => {}}
-                        handleSave={() => {}}
-                        title={"Delete"}
-                      />
-                    </td>
-                  </tr>
-                  <tr className="flex justify-between items-center bg-white border-b">
-                    <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
-                      <b className="text-sm text-[#555] font-normal">Coding</b>
-                    </th>
-                    <td className="px-[5px]">
-                      <ButtonControl
-                        handleCancel={() => {}}
-                        handleSave={() => {}}
-                        title={"Delete"}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+            <ProjectList />
           </div>
           <Modal
             isOpen={isOpen}
             handleIsOpen={handleIsOpen}
             handleSubmit={handleSubmit}
             handleChange={(e) => handleChange(e)}
+            dataItemProp={undefined}
+            handleGetDataModal={() => {}}
           />
         </div>
       </div>
+
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Open alert dialog
+      </Button>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle
+          sx={{ m: 0, p: 2 }}
+          id="customized-dialog-title"
+          className="!text-3xl text-[#000000DE] font-bold border-b border-gray-300"
+        >
+          Edit Project : Ha-Test
+        </DialogTitle>
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: "absolute",
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500]
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+
+        <Tabs
+          value={tabIndex}
+          onChange={handleTabChange}
+          centered
+          className="tab-container border-b border-gray-300 mt-5"
+        >
+          <Tab
+            label={<span className="normal-case">General</span>}
+            className="opacity-60 !min-w-[160px]"
+          />
+          <Tab
+            label={<span className="normal-case">Team</span>}
+            className="opacity-60 !min-w-[160px]"
+          />
+          <Tab
+            label={<span className="normal-case">Tasks</span>}
+            className="opacity-60 !min-w-[160px]"
+          />
+        </Tabs>
+        <Box p={2} className="tab-content-container">
+          <div
+            className={`tab-content ${
+              tabIndex === 0 ? "active-tab" : "inactive-tab"
+            }`}
+          >
+            <Form
+              name="basic"
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+              style={{ maxWidth: 600 }}
+              initialValues={{ remember: true }}
+              autoComplete="off"
+            >
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[
+                  { required: true, message: "Please input your username!" }
+                ]}
+                className=""
+              >
+                <div className="flex">
+                  <Select
+                    className="mr-9"
+                    showSearch
+                    placeholder="Select a person"
+                    optionFilterProp="children"
+                    onChange={onChange}
+                    onSearch={onSearch}
+                    filterOption={filterOption}
+                    options={[
+                      {
+                        value: "jack",
+                        label: "Jack"
+                      },
+                      {
+                        value: "lucy",
+                        label: "Lucy"
+                      },
+                      {
+                        value: "tom",
+                        label: "Tom"
+                      }
+                    ]}
+                  />
+                  <ButtonControl
+                    handleClick={function (): void {
+                      throw new Error("Function not implemented.");
+                    }}
+                    title={"abcd"}
+                    dataItem={undefined}
+                  />
+                </div>
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" }
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[
+                  { required: true, message: "Please input your username!" }
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" }
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+              <Form.Item
+                label="Username"
+                name="username"
+                rules={[
+                  { required: true, message: "Please input your username!" }
+                ]}
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                label="Password"
+                name="password"
+                rules={[
+                  { required: true, message: "Please input your password!" }
+                ]}
+              >
+                <Input.Password />
+              </Form.Item>
+
+              <Form.Item
+                name="remember"
+                valuePropName="checked"
+                wrapperCol={{ offset: 8, span: 16 }}
+              >
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button>Submit</Button>
+              </Form.Item>
+            </Form>
+          </div>
+          <div
+            className={`tab-content ${
+              tabIndex === 1 ? "active-tab" : "inactive-tab"
+            }`}
+          >
+            Content of Tab 2
+          </div>
+          <div
+            className={`tab-content ${
+              tabIndex === 2 ? "active-tab" : "inactive-tab"
+            }`}
+          >
+            Content of Tab 3
+          </div>
+        </Box>
+      </Dialog>
     </div>
   );
 };
