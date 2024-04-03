@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useState } from "react";
 import "./TaskPage.scss";
 import { TaskList } from "./component/TaskList/TaskList";
-import Modal from "../../components/Modal/Modal";
+import ModalTask from "../../components/ModalTask/ModalTask";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
 import { ControlTask } from "./component/ControlTask";
 import { DataItemProp } from "../../type/DataItemProp";
@@ -14,41 +14,41 @@ const TaskPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
   const [isCreateOrUpdate, setIsCreateOrUpdate] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [dataModal, setDataModal] = useState<Partial<DataItemProp> | undefined>(
-    undefined
-  );
+  const [dataModalTask, setDataModalTask] = useState<
+    Partial<DataItemProp> | undefined
+  >(undefined);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleIsOpen = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleGetDataModal = (item: Partial<DataItemProp> | undefined) => {
-    setDataModal(item);
+  const handleGetDataModalTask = (item: Partial<DataItemProp> | undefined) => {
+    setDataModalTask(item);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDataModal({
-      ...dataModal,
+    setDataModalTask({
+      ...dataModalTask,
       [e.target.name]: e.target.value
     });
   };
 
   const handleSubmit = async () => {
-    if (!dataModal?.type) {
-      setDataModal({
-        ...dataModal,
+    if (!dataModalTask?.type) {
+      setDataModalTask({
+        ...dataModalTask,
         ["type"]: TYPE_TASK.COMMON_TYPE
       });
     }
     // Đóng dialog
     handleIsOpen();
-    if (dataModal?.id) {
-      const result = await createOrUpdateTask(dataModal);
+    if (dataModalTask?.id) {
+      const result = await createOrUpdateTask(dataModalTask);
       if (result && result.success) {
         await Toast.fire({
           icon: "success",
-          title: `Created Task : ${dataModal.name}`,
+          title: `Created Task : ${dataModalTask.name}`,
           background: "#51a351"
         });
       } else {
@@ -61,14 +61,14 @@ const TaskPage = () => {
       setIsCreateOrUpdate(!isCreateOrUpdate);
     } else {
       const result = await createOrUpdateTask({
-        ...dataModal,
+        ...dataModalTask,
         isDeleted: true,
         id: 0
       });
       if (result && result.success) {
         await Toast.fire({
           icon: "success",
-          title: `Created Task : ${dataModal?.name}`,
+          title: `Created Task : ${dataModalTask?.name}`,
           background: "#51a351"
         });
       } else {
@@ -106,16 +106,16 @@ const TaskPage = () => {
               searchValue={searchValue}
               isOnKeyDown={isOnKeyDown}
               isCreateOrUpdate={isCreateOrUpdate}
-              handleGetDataModal={(item) => handleGetDataModal(item)}
+              handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
             />
           </div>
-          <Modal
+          <ModalTask
             isOpen={isOpen}
             handleIsOpen={handleIsOpen}
             handleSubmit={handleSubmit}
             handleChange={(e) => handleChange(e)}
-            dataItemProp={dataModal}
-            handleGetDataModal={(item) => handleGetDataModal(item)}
+            dataItemProp={dataModalTask}
+            handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
           />
         </div>
       </div>

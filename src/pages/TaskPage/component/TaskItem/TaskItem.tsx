@@ -16,12 +16,12 @@ interface TaskItemProps {
   name: string;
   handleIsOpen: () => void;
   loadDataTask: () => void;
-  handleGetDataModal: (taskItem: Partial<DataItemProp> | undefined) => void;
+  handleGetDataModalTask: (taskItem: Partial<DataItemProp> | undefined) => void;
   dataItemTask: DataItemProp | undefined;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const [, setIsShowModalConfirm] = useState(false);
+  const [, setIsShowModalTaskConfirm] = useState(false);
   const titleBtnArchive =
     props.dataItemTask &&
     (props.dataItemTask.isDeleted
@@ -30,16 +30,16 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
       ? "Archive"
       : "");
 
-  const handleShowModalConfirm = (
+  const handleShowModalTaskConfirm = (
     isEnabled: boolean | ((prevState: boolean) => boolean)
   ) => {
-    setIsShowModalConfirm(isEnabled);
+    setIsShowModalTaskConfirm(isEnabled);
   };
 
   const handleArchiveOrUnArchive = (
     taskItem: Partial<DataItemProp> | undefined
   ) => {
-    handleShowModalConfirm(true);
+    handleShowModalTaskConfirm(true);
     Swal.fire({
       title: "Are you sure?",
       text: `${
@@ -91,7 +91,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
   };
 
   const handleDeleteTask = (taskItem: Partial<DataItemProp> | undefined) => {
-    handleShowModalConfirm(true);
+    handleShowModalTaskConfirm(true);
     Swal.fire({
       title: "Are you sure?",
       text: `${
@@ -130,7 +130,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
         <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap dark:text-white">
           <ButtonControl
             handleClick={(taskItem) => {
-              props.handleIsOpen(), props.handleGetDataModal(taskItem);
+              props.handleIsOpen(), props.handleGetDataModalTask(taskItem);
             }}
             title={TITLE_BUTTON.EDIT}
             dataItem={props.dataItemTask}

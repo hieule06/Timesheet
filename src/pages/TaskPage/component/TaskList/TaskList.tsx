@@ -12,7 +12,7 @@ interface TaskListProps {
   searchValue: string;
   isOnKeyDown: boolean;
   isCreateOrUpdate: boolean;
-  handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
+  handleGetDataModalTask: (item: Partial<DataItemProp> | undefined) => void;
 }
 
 export const TaskList: React.FC<TaskListProps> = (props) => {
@@ -107,8 +107,8 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                         key={Task.id}
                         name={Task.name}
                         handleIsOpen={props.handleIsOpen}
-                        handleGetDataModal={(item) =>
-                          props.handleGetDataModal(item)
+                        handleGetDataModalTask={(item) =>
+                          props.handleGetDataModalTask(item)
                         }
                         dataItemTask={Task}
                         loadDataTask={loadData}
@@ -119,8 +119,8 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
                       key={Task.id}
                       name={Task.name}
                       handleIsOpen={props.handleIsOpen}
-                      handleGetDataModal={(item) =>
-                        props.handleGetDataModal(item)
+                      handleGetDataModalTask={(item) =>
+                        props.handleGetDataModalTask(item)
                       }
                       dataItemTask={Task}
                       loadDataTask={loadData}
