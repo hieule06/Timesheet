@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import "./ProjectList.scss";
 import { getAllProjects } from "../../../../services/ProjectServices/projectServices";
-import { ProjectItem } from "../ProjectItem";
+import { ProjectItem } from "../ProjectItem/ProjectItem";
 
-interface ProjectListProps {}
+interface ProjectListProps {
+  handleIsOpenModal: () => void;
+  handleIsCloseModal: () => void;
+  isOpenModal: boolean;
+}
 
 interface ProjectItem {
   customerName: string;
@@ -18,7 +22,7 @@ interface ProjectItem {
   id: 0;
 }
 
-export const ProjectList: React.FC<ProjectListProps> = () => {
+export const ProjectList: React.FC<ProjectListProps> = (props) => {
   const [listProjects, setListProjects] = useState([]);
   const [listCustomerNames, setListCustomerNames] = useState<Array<string>>([]);
 
@@ -43,10 +47,11 @@ export const ProjectList: React.FC<ProjectListProps> = () => {
   useEffect(() => {
     loadData();
   }, []);
+
   return (
     <>
-      {listCustomerNames.map((itemCustomerName) => (
-        <div className="wrapper-task-list grid gap-4 pb-5">
+      {listCustomerNames.map((itemCustomerName, idx) => (
+        <div className="wrapper-task-list grid gap-4 pb-5" key={idx}>
           <table className="w-full text-sm text-left bg-[#D3D3D3] rounded-[5px]">
             <thead className="p-[10px] pl-5 text-lg font-bold text-[#555555]">
               <tr className="border-b dark:border-gray-700">
@@ -57,7 +62,7 @@ export const ProjectList: React.FC<ProjectListProps> = () => {
             </thead>
             <tbody>
               {listProjects.map(
-                (item: ProjectItem) =>
+                (item: ProjectItem, index) =>
                   item.customerName === itemCustomerName && (
                     <ProjectItem
                       name={item.name}
@@ -66,6 +71,10 @@ export const ProjectList: React.FC<ProjectListProps> = () => {
                       timeStart={item.timeStart}
                       timeEnd={item.timeEnd}
                       dataItemTask={undefined}
+                      handleIsOpenModal={props.handleIsOpenModal}
+                      handleIsCloseModal={props.handleIsCloseModal}
+                      isOpenModal={props.isOpenModal}
+                      key={index}
                     />
                   )
               )}

@@ -11,12 +11,12 @@ import {
   SelectChangeEvent
 } from "@mui/material";
 import { ButtonControl } from "../Button/Button";
-import "./Modal.scss";
+import "./ModalTask.scss";
 import { ArrayTypeTask } from "../../constants/task/ArrayTypeTask";
 import { DataItemProp } from "../../type/DataItemProp";
 import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
 
-interface ModalProps {
+interface ModalTaskProps {
   isOpen: boolean;
   handleIsOpen: () => void;
   handleChange: (
@@ -27,10 +27,10 @@ interface ModalProps {
   ) => void;
   handleSubmit: () => void;
   dataItemProp: Partial<DataItemProp> | undefined;
-  handleGetDataModal: (item: Partial<DataItemProp> | undefined) => void;
+  handleGetDataModalTask: (item: Partial<DataItemProp> | undefined) => void;
 }
 
-export const Modal: React.FC<ModalProps> = (props) => {
+export const ModalTask: React.FC<ModalTaskProps> = (props) => {
   return (
     <div className="modal">
       <Dialog
@@ -91,14 +91,14 @@ export const Modal: React.FC<ModalProps> = (props) => {
             title={TITLE_BUTTON.CANCEL}
             dataItem={props.dataItemProp}
             handleClick={() => {
-              props.handleIsOpen(), props.handleGetDataModal(undefined);
+              props.handleIsOpen(), props.handleGetDataModalTask(undefined);
             }}
           />
           <ButtonControl
             title={TITLE_BUTTON.SAVE}
             dataItem={props.dataItemProp}
             handleClick={() => {
-              props.handleSubmit(), props.handleGetDataModal(undefined);
+              props.handleSubmit(), props.handleGetDataModalTask(undefined);
             }}
           />
         </DialogActions>
@@ -107,4 +107,4 @@ export const Modal: React.FC<ModalProps> = (props) => {
   );
 };
 
-export default Modal;
+export default ModalTask;
