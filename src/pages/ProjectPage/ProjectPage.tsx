@@ -1,17 +1,25 @@
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import "./ProjectPage.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import SearchIcon from "@mui/icons-material/Search";
-import { TextField } from "@mui/material";
-import Visibility from "@mui/icons-material/Visibility";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
-import { ProjectList } from "./component/ProjectList/ProjectList";
 import ModalProject from "../../components/ModalProject/ModalProject";
+import { HeaderControlPage } from "../../components/HeaderControlPage/HeaderControlPage";
+import { ProjectList } from "./component/ProjectList/ProjectList";
+import { DataItemProjectProp } from "../../type/DataItemProjectProp";
+import { TypeDataModalProject } from "../../type/TypeDataModalProject";
 
 const ProjectPage = () => {
-  const [focused, setFocused] = useState(false);
+  const [isOnKeyDown, setIsOnKeyDown] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [statusProject, setStatusProject] = useState("0");
+  const [isOpen, setIsOpen] = useState(false);
+  const [dataModalProject, setDataModalProject] = useState<
+    Partial<TypeDataModalProject> | undefined
+  >(undefined);
+  const [listCustomer, setListCustomer] = useState<string[]>();
+
+  const handleIsOpen = () => {
+    setIsOpen(!isOpen);
+  };
   const [isOpenModal, setIsOpenModal] = useState(false);
   /* const [formData, setFormData] = useState({
     name: "",
@@ -24,6 +32,16 @@ const ProjectPage = () => {
 
   const handleIsCloseModal = () => {
     setIsOpenModal(false);
+  };
+
+  const handleGetDataModalProject = (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => {
+    setDataModalProject(item);
+  };
+
+  const handleGetListCusTomer = (listCustomer: string[]) => {
+    setListCustomer(listCustomer);
   };
 
   /* const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,51 +64,38 @@ const ProjectPage = () => {
         <div className="task-page bg-white border-gray-200 border-dashed dark:border-gray-700">
           <HeaderContainer title={"Manage Projects"} />
           <div className="p-5">
-            <div className="flex w-full">
-              <div className="w-2/6">
-                <button
-                  type="button"
-                  className="flex items-center text-sm font-semibold bg-red-500 text-white px-4 py-2 ml-[10px] shadow-md rounded-md transform transition duration-300 hover:bg-red-600"
-                  onClick={() => {}}
-                >
-                  <FontAwesomeIcon
-                    className="space-y-2 mr-1 text-lg line-height-36 padding-x-16"
-                    icon={faPlus}
-                  />
-                  New Task
-                </button>
-              </div>
-              <div className="mb-5 px-[15px] w-4/6">
-                <TextField
-                  className="w-[450px]"
-                  label={
-                    <span style={{ letterSpacing: "1px" }}>
-                      Search by task name
-                    </span>
-                  }
-                  variant="outlined"
-                  InputProps={{
-                    startAdornment: (
-                      <SearchIcon position="start">
-                        <Visibility></Visibility>
-                      </SearchIcon>
-                    )
-                  }}
-                  InputLabelProps={{
-                    shrink: focused || !!searchValue,
-                    style: { marginLeft: 30 }
-                  }}
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                  onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)}
-                />
-              </div>
-            </div>
+            <HeaderControlPage
+              searchValue={searchValue}
+              statusProject={statusProject}
+              isOnKeyDown={isOnKeyDown}
+              handleIsOpen={handleIsOpen}
+              setSearchValue={(prev: SetStateAction<string>) =>
+                setSearchValue(prev)
+              }
+              setIsOnKeyDown={(
+                prev: boolean | ((prevState: boolean) => boolean)
+              ) => setIsOnKeyDown(prev)}
+              setStatusProject={(prev: SetStateAction<string>) =>
+                setStatusProject(prev)
+              }
+              isShowControlProject={true}
+            />
             <ProjectList
               handleIsOpenModal={handleIsOpenModal}
               handleIsCloseModal={handleIsCloseModal}
               isOpenModal={isOpenModal}
+              searchValue={searchValue}
+              statusProject={statusProject}
+              isOnKeyDown={isOnKeyDown}
+              setIsOnKeyDown={(
+                prev: boolean | ((prevState: boolean) => boolean)
+              ) => setIsOnKeyDown(prev)}
+              handleGetDataModalProject={(
+                item: Partial<DataItemProjectProp> | undefined
+              ) => handleGetDataModalProject(item)}
+              handleGetListCusTomer={(listCustomer) =>
+                handleGetListCusTomer(listCustomer)
+              }
             />
           </div>
         </div>
@@ -99,6 +104,8 @@ const ProjectPage = () => {
         handleIsOpenModal={handleIsOpenModal}
         handleIsCloseModal={handleIsCloseModal}
         isOpenModal={isOpenModal}
+        dataItemProjectProp={dataModalProject}
+        dataListCustomer={listCustomer}
       />
     </div>
   );

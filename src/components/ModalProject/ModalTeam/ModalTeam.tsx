@@ -1,28 +1,45 @@
+import Accordion from "@mui/material/Accordion";
+import AccordionActions from "@mui/material/AccordionActions";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
-  Select,
-  MenuItem,
-  ListSubheader,
-  TextField,
-  InputAdornment
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Grid } from "@mui/material";
-import {
-  TextareaAutosize,
-  FormControlLabel,
+  Box,
   Checkbox,
-  Button
+  FormControlLabel,
+  InputAdornment,
+  ListSubheader,
+  MenuItem,
+  Paper,
+  Select,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TextField
 } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
+import Visibility from "@mui/icons-material/Visibility";
+import SearchIcon from "@mui/icons-material/Search";
 import { useMemo, useState } from "react";
+import "./ModalTeam.scss";
+import { ButtonControl } from "../../Button/Button";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 
 export const ModalTeam = () => {
+  const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
+  const [isOnFocusSearchUser, setIsOnFocusSearchUser] =
+    useState<boolean>(false);
+  const [searchValue, setSearchValue] = useState("");
+
+  const handleOnFocus = () => {
+    setIsOnFocus(!isOnFocus);
+  };
+
+  const handleOnFocusSearchUser = () => {
+    setIsOnFocusSearchUser(!isOnFocusSearchUser);
+  };
+
   const containsText = (text: string, searchText: string) =>
     text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
 
@@ -40,183 +57,226 @@ export const ModalTeam = () => {
     () => allOptions.filter((option) => containsText(option, searchText)),
     [searchText]
   );
+  function createData(name: string, calories: number) {
+    return { name, calories, checked: false };
+  }
 
-  const [valueDate, setValueDate] = useState<Dayjs | null>(dayjs("2022-04-17"));
+  const rows = [
+    createData("Frozen yoghurt", 159),
+    createData("Ice cream sandwich", 237),
+    createData("Eclair", 262),
+    createData("Cupcake", 305),
+    createData("Gingerbread", 356)
+  ];
+  const [data] = useState(rows);
 
   return (
-    <Grid container spacing={3} alignItems="center" padding="30px">
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Client*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <Select
-          MenuProps={{ autoFocus: false }}
-          id="search-select"
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
-          onClose={() => setSearchText("")}
-          renderValue={() => selectedOption}
-          fullWidth
-          className="mr-10"
+    <div className="flex">
+      <Accordion
+        defaultExpanded
+        sx={{ padding: "0 24px", marginTop: "1px !important", flex: "1" }}
+        className="wrapper-modal-team"
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel3-content"
+          id="panel3-header"
+          sx={{ fontSize: "15px", fontWeight: 700 }}
         >
-          <ListSubheader>
-            <TextField
-              size="small"
-              autoFocus
-              placeholder="Type to search..."
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
-              }}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key !== "Escape") {
-                  e.stopPropagation();
-                }
-              }}
+          Selected member
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{ display: "flex" }}>
+            <FormControlLabel
+              control={<Checkbox defaultChecked />}
+              label={
+                <span className="text-[15px] font-bold">
+                  Show deactive member
+                </span>
+              }
             />
-          </ListSubheader>
-          {displayedOptions.map((option, i) => (
-            <MenuItem key={i} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </Grid>
-      <Grid item xs={4} sx={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className="flex items-center text-sm font-semibold bg-red-500 text-white px-4 py-2 ml-[10px] shadow-md rounded-md transform transition duration-300 hover:bg-red-600"
-          onClick={() => {}}
-        >
-          <FontAwesomeIcon
-            className="space-y-2 mr-1 text-lg line-height-36 padding-x-16"
-            icon={faPlus}
+            <FormControlLabel
+              control={<Checkbox defaultChecked />}
+              label={
+                <span className="text-[15px] font-bold">
+                  Show Inactive user
+                </span>
+              }
+            />
+          </Box>
+          <TextField
+            className=""
+            label={
+              <span style={{ letterSpacing: "1px" }}>Search by task name</span>
+            }
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <SearchIcon position="start">
+                  <Visibility></Visibility>
+                </SearchIcon>
+              )
+            }}
+            InputLabelProps={{
+              shrink: isOnFocus || !!searchValue,
+              style: { marginLeft: 30 }
+            }}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onFocus={handleOnFocus}
+            onBlur={handleOnFocus}
           />
-          New Task
-        </button>
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Name*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField id="outlined-basic" variant="outlined" fullWidth />
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Name*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField id="outlined-basic" variant="outlined" fullWidth />
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Date</span>
-      </Grid>
-      <Grid item xs={6}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker", "DatePicker"]}>
-            <DatePicker
-              defaultValue={dayjs("2022-04-17")}
-              sx={{ display: "inline-block" }}
-            />
-            <span className="inline-block ml-5 mr-5">to</span>
-            <DatePicker
-              value={valueDate}
-              onChange={(newValue) => setValueDate(newValue)}
-              sx={{ display: "inline-block" }}
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">All User</span>
-      </Grid>
-      <Grid item xs={10}>
-        <FormControlLabel
-          control={<Checkbox defaultChecked />}
-          label="Auto add user as a member of this project when creating new user"
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Note</span>
-      </Grid>
-      <Grid item xs={10}>
-        <TextareaAutosize
-          placeholder="Minimum 3 rows"
-          minRows={2}
-          style={{
-            width: "100%",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "4px",
-            padding: "6px 10px"
-          }}
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Type*</span>
-      </Grid>
-      <Grid item xs={10}>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
+        </AccordionDetails>
+        <AccordionActions>
+          <ButtonControl
+            handleClick={() => {}}
+            title="Add users"
+            dataItem={undefined}
+          />
+        </AccordionActions>
+      </Accordion>
+      <Accordion
+        defaultExpanded
+        sx={{
+          padding: "0 24px",
+          marginTop: "1px !important",
+          marginBottom: "16px !important",
+          flex: "1"
+        }}
+        className="wrapper-modal-team"
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel3-content"
+          id="panel3-header"
+          sx={{ fontSize: "15px", fontWeight: 700 }}
         >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-      </Grid>
-    </Grid>
+          Selected member
+        </AccordionSummary>
+        <AccordionDetails>
+          <Box sx={{ marginBottom: "10px" }}>
+            <Select
+              MenuProps={{ autoFocus: false }}
+              id="search-select"
+              value={selectedOption}
+              onChange={(e) => setSelectedOption(e.target.value)}
+              onClose={() => setSearchText("")}
+              renderValue={() => selectedOption}
+              fullWidth
+              className="mr-10 mb-3"
+            >
+              <ListSubheader>
+                <TextField
+                  size="small"
+                  autoFocus
+                  placeholder="Type to search..."
+                  fullWidth
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    )
+                  }}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Escape") {
+                      e.stopPropagation();
+                    }
+                  }}
+                />
+              </ListSubheader>
+              {displayedOptions.map((option, i) => (
+                <MenuItem
+                  key={i}
+                  value={option}
+                  sx={{ fontSize: "14px !important" }}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+            <Select
+              MenuProps={{ autoFocus: false }}
+              id="search-select2"
+              value={selectedOption}
+              onChange={(e) => setSelectedOption(e.target.value)}
+              onClose={() => setSearchText("")}
+              renderValue={() => selectedOption}
+              fullWidth
+              className="mr-10"
+            >
+              {displayedOptions.map((option, i) => (
+                <MenuItem
+                  key={i}
+                  value={option}
+                  sx={{ fontSize: "14px !important" }}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </Select>
+          </Box>
+          <TextField
+            label={
+              <span style={{ letterSpacing: "1px" }}>Search by task name</span>
+            }
+            variant="standard"
+            InputProps={{
+              startAdornment: (
+                <SearchIcon position="start">
+                  <Visibility></Visibility>
+                </SearchIcon>
+              )
+            }}
+            InputLabelProps={{
+              shrink: isOnFocusSearchUser || !!searchValue,
+              style: { marginLeft: 30 }
+            }}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onFocus={handleOnFocusSearchUser}
+            onBlur={handleOnFocusSearchUser}
+          />
+          <TableContainer
+            component={Paper}
+            sx={{
+              marginTop: "20px",
+              boxShadow: "none"
+            }}
+          >
+            <Table aria-label="simple table">
+              <TableBody>
+                {data.map((row, index) => (
+                  <TableRow
+                    key={row.name}
+                    className={
+                      index % 2 === 0
+                        ? "bg-gray-50 dark:bg-gray-800"
+                        : "bg-white dark:bg-gray-900"
+                    }
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                      "&:hover": { backgroundColor: "#f5f5f5" }
+                    }}
+                  >
+                    <TableCell sx={{ width: "50%" }} component="th" scope="row">
+                      <ArrowBackIosIcon
+                        sx={{
+                          marginRight: 2,
+                          cursor: "pointer"
+                        }}
+                      />
+                      {row.name}
+                    </TableCell>
+                    <TableCell sx={{ padding: 0 }}>Other Task</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </AccordionDetails>
+      </Accordion>
+    </div>
   );
 };

@@ -7,18 +7,25 @@ import {
   IconButton,
   Tab,
   Tabs,
-  Typography
+  Typography,
+  DialogActions
 } from "@mui/material";
 import "./ModalProject.scss";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalGeneral } from "./ModalGeneral/ModalGeneral";
 import { ModalTeam } from "./ModalTeam/ModalTeam";
 import { ModalTaskPrj } from "./ModalTaskPrj/ModalTaskPrj";
+import { ButtonControl } from "../Button/Button";
+import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
+import { TypeDataModalProject } from "../../type/TypeDataModalProject";
+import { TypeListCustomer } from "../../type/TypeListCustomer";
 
 interface ModalProjectProps {
   handleIsOpenModal: () => void;
   handleIsCloseModal: () => void;
   isOpenModal: boolean;
+  dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
+  dataListCustomer: TypeListCustomer[] | undefined;
 }
 
 interface TabPanelProps {
@@ -62,9 +69,9 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
         <DialogTitle
           sx={{ m: 0, p: 2 }}
           id="customized-dialog-title"
-          className="!text-3xl text-[#000000DE] font-bold border-b border-gray-300"
+          className="!text-3xl text-[#000000DE] font-extrabold border-b border-gray-300 !mt-5 !mb-[10px]"
         >
-          Edit Project : Ha-Test
+          Edit Project : {props.dataItemProjectProp?.name}
         </DialogTitle>
         <IconButton
           aria-label="close"
@@ -78,158 +85,6 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
         >
           <CloseIcon />
         </IconButton>
-
-        {/* <Tabs
-          value={tabIndex}
-          onChange={handleTabChange}
-          centered
-          className="tab-container border-b border-gray-300 mt-5"
-        >
-          <Tab
-            label={<span className="normal-case">General</span>}
-            className="opacity-60 !min-w-[160px]"
-          />
-          <Tab
-            label={<span className="normal-case">Team</span>}
-            className="opacity-60 !min-w-[160px]"
-          />
-          <Tab
-            label={<span className="normal-case">Tasks</span>}
-            className="opacity-60 !min-w-[160px]"
-          />
-        </Tabs>
-        <Box p={2} className="tab-content-container">
-          <div
-            className={`tab-content ${
-              tabIndex === 0 ? "active-tab" : "inactive-tab"
-            }`}
-          >
-            <Form
-              name="basic"
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-              style={{ maxWidth: 600 }}
-              initialValues={{ remember: true }}
-              autoComplete="off"
-            >
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  { required: true, message: "Please input your username!" }
-                ]}
-                className=""
-              >
-                <div className="flex">
-                  <Select
-                    className="mr-9"
-                    showSearch
-                    placeholder="Select a person"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    onSearch={onSearch}
-                    filterOption={filterOption}
-                    options={[
-                      {
-                        value: "jack",
-                        label: "Jack"
-                      },
-                      {
-                        value: "lucy",
-                        label: "Lucy"
-                      },
-                      {
-                        value: "tom",
-                        label: "Tom"
-                      }
-                    ]}
-                  />
-                  <ButtonControl
-                    handleClick={function (): void {
-                      throw new Error("Function not implemented.");
-                    }}
-                    title={"abcd"}
-                    dataItem={undefined}
-                  />
-                </div>
-              </Form.Item>
-
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" }
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  { required: true, message: "Please input your username!" }
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" }
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-              <Form.Item
-                label="Username"
-                name="username"
-                rules={[
-                  { required: true, message: "Please input your username!" }
-                ]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                label="Password"
-                name="password"
-                rules={[
-                  { required: true, message: "Please input your password!" }
-                ]}
-              >
-                <Input.Password />
-              </Form.Item>
-
-              <Form.Item
-                name="remember"
-                valuePropName="checked"
-                wrapperCol={{ offset: 8, span: 16 }}
-              >
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button>Submit</Button>
-              </Form.Item>
-            </Form>
-          </div>
-          <div
-            className={`tab-content ${
-              tabIndex === 1 ? "active-tab" : "inactive-tab"
-            }`}
-          >
-            Content of Tab 2
-          </div>
-          <div
-            className={`tab-content ${
-              tabIndex === 2 ? "active-tab" : "inactive-tab"
-            }`}
-          >
-            Content of Tab 3
-          </div>
-        </Box> */}
         <Box
           sx={{
             bgcolor: "background.paper",
@@ -246,23 +101,46 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
               textColor="primary"
               variant="fullWidth"
               aria-label="action tabs example"
+              className="pt-5 bg-white"
             >
-              <Tab label="Item One" />
-              <Tab label="Item Two" />
-              <Tab label="Item Three" />
+              <Tab
+                label={<span className="normal-case font-medium">General</span>}
+              />
+              <Tab
+                label={<span className="normal-case font-medium">Team</span>}
+              />
+              <Tab
+                label={<span className="normal-case font-medium">Tasks</span>}
+              />
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0}>
-            <ModalGeneral />
+            <ModalGeneral
+              dataItemProjectProp={props.dataItemProjectProp}
+              dataListCustomer={props.dataListCustomer}
+            />
           </TabPanel>
 
           <TabPanel value={value} index={1}>
             <ModalTeam />
           </TabPanel>
+
           <TabPanel value={value} index={2}>
             <ModalTaskPrj />
           </TabPanel>
         </Box>
+        <DialogActions className="left-0 bg-white">
+          <ButtonControl
+            title={TITLE_BUTTON.CANCEL}
+            handleClick={() => {}}
+            dataItem={undefined}
+          />
+          <ButtonControl
+            title={TITLE_BUTTON.SAVE}
+            dataItem={undefined}
+            handleClick={() => {}}
+          />
+        </DialogActions>
       </Dialog>
     </>
   );

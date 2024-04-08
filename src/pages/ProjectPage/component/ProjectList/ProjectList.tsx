@@ -2,11 +2,20 @@ import React, { useEffect, useState } from "react";
 import "./ProjectList.scss";
 import { getAllProjects } from "../../../../services/ProjectServices/projectServices";
 import { ProjectItem } from "../ProjectItem/ProjectItem";
+import { TypeDataModalProject } from "../../../../type/TypeDataModalProject";
 
 interface ProjectListProps {
   handleIsOpenModal: () => void;
   handleIsCloseModal: () => void;
+  setIsOnKeyDown: React.Dispatch<React.SetStateAction<boolean>>;
   isOpenModal: boolean;
+  searchValue: string;
+  statusProject: string;
+  isOnKeyDown: boolean;
+  handleGetDataModalProject: (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => void;
+  handleGetListCusTomer: (listCustomer: string[]) => void;
 }
 
 interface ProjectItem {
@@ -28,7 +37,20 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
 
   const loadData = async () => {
     try {
-      const projectsData = await getAllProjects({ status: 0, search: "" });
+      let projectsData;
+      if (props.statusProject === "3") {
+        projectsData = await getAllProjects({
+          search: props.searchValue,
+          status: null
+        });
+      } else if (props.searchValue || props.statusProject) {
+        projectsData = await getAllProjects({
+          status: Number(props.statusProject),
+          search: props.searchValue
+        });
+      } else {
+        projectsData = await getAllProjects({ status: 0, search: "" });
+      }
       if (projectsData && projectsData.result) {
         const customerNames: React.SetStateAction<string[]> = [];
         projectsData.result.map(
@@ -46,7 +68,7 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [props.statusProject, props.isOnKeyDown]);
 
   return (
     <>
@@ -62,19 +84,22 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
             </thead>
             <tbody>
               {listProjects.map(
-                (item: ProjectItem, index) =>
-                  item.customerName === itemCustomerName && (
+                (dataItemProject: ProjectItem, index) =>
+                  dataItemProject.customerName === itemCustomerName && (
                     <ProjectItem
-                      name={item.name}
-                      pms={item.pms}
-                      activeMember={item.activeMember}
-                      timeStart={item.timeStart}
-                      timeEnd={item.timeEnd}
-                      dataItemTask={undefined}
+                      dataItemProject={dataItemProject}
                       handleIsOpenModal={props.handleIsOpenModal}
                       handleIsCloseModal={props.handleIsCloseModal}
                       isOpenModal={props.isOpenModal}
                       key={index}
+                      setIsOnKeyDown={props.setIsOnKeyDown}
+                      isOnKeyDown={props.isOnKeyDown}
+                      handleGetDataModalProject={(
+                        item: Partial<TypeDataModalProject> | undefined
+                      ) => props.handleGetDataModalProject(item)}
+                      handleGetListCusTomer={(listCustomer) =>
+                        props.handleGetListCusTomer(listCustomer)
+                      }
                     />
                   )
               )}

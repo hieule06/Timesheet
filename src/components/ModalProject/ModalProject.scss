@@ -23,6 +23,24 @@
 
   .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation24.MuiDialog-paper.MuiDialog-paperScrollPaper.MuiDialog-paperWidthSm.css-1t1j96h-MuiPaper-root-MuiDialog-paper {
     max-width: none;
+    height: 90vh;
+    position: relative;
+
+    .MuiBox-root.css-lx4kgr {
+      margin-bottom: 40px;
+      padding: 0 24px;
+    }
+
+    .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation1.MuiAccordion-root.MuiAccordion-rounded.Mui-expanded.MuiAccordion-gutters.css-1086bdv-MuiPaper-root-MuiAccordion-root {
+      margin-bottom: 30px;
+      box-shadow: -1px -1px 5px -1px rgba(0, 0, 0, 0.12);
+    }
+
+    .MuiDialogActions-root.MuiDialogActions-spacing.css-knqc4i-MuiDialogActions-root {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
   }
 
   .MuiBox-root.css-lx4kgr {

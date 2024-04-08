@@ -1,12 +1,12 @@
 import React from "react";
-import { DataItemProp } from "../../type/DataItemProp";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
 import { TYPE_TASK } from "../../constants/task/TypeTask";
 
 interface ButtonProps {
-  handleClick: (item: Partial<DataItemProp> | undefined) => void;
+  handleClick: (item: Partial<DataItemTaskProp> | undefined) => void;
   title: string | undefined;
-  dataItem: Partial<DataItemProp> | undefined;
+  dataItem: Partial<DataItemTaskProp> | undefined;
 }
 
 export const ButtonControl: React.FC<ButtonProps> = (props) => {
