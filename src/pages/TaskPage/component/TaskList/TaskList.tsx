@@ -3,7 +3,7 @@ import "./TaskList.scss";
 import { getAllTasks } from "../../../../services/TaskServices/taskServices";
 import { TypeTaskHeader } from "../TypeTaskHeader/TypeTaskHeader";
 import { ArrayTypeTask } from "../../../../constants/task/ArrayTypeTask";
-import { DataItemProp } from "../../../../type/DataItemProp";
+import { DataItemTaskProp } from "../../../../type/DataItemTaskProp";
 import { TaskItem } from "../TaskItem/TaskItem";
 import { TYPE_TASK } from "../../../../constants/task/TypeTask";
 
@@ -12,12 +12,12 @@ interface TaskListProps {
   searchValue: string;
   isOnKeyDown: boolean;
   isCreateOrUpdate: boolean;
-  handleGetDataModalTask: (item: Partial<DataItemProp> | undefined) => void;
+  handleGetDataModalTask: (item: Partial<DataItemTaskProp> | undefined) => void;
 }
 
 export const TaskList: React.FC<TaskListProps> = (props) => {
-  const [listTaskCommon, setListTaskCommon] = useState<DataItemProp[]>([]);
-  const [listTaskOther, setListTaskOther] = useState<DataItemProp[]>([]);
+  const [listTaskCommon, setListTaskCommon] = useState<DataItemTaskProp[]>([]);
+  const [listTaskOther, setListTaskOther] = useState<DataItemTaskProp[]>([]);
   const [checkSearchValue, setCheckSearchValue] = useState(""); // Giá trị search value chuyển về toLowerCase sau khi được enter
 
   // có thể dùng sau nếu nhiều type :
@@ -46,10 +46,10 @@ export const TaskList: React.FC<TaskListProps> = (props) => {
     try {
       const tasksData = await getAllTasks();
       if (tasksData && tasksData.result) {
-        const listDataCommon: React.SetStateAction<DataItemProp[]> = [];
-        const listDataOther: React.SetStateAction<DataItemProp[]> = [];
+        const listDataCommon: React.SetStateAction<DataItemTaskProp[]> = [];
+        const listDataOther: React.SetStateAction<DataItemTaskProp[]> = [];
 
-        tasksData.result.map((item: DataItemProp) =>
+        tasksData.result.map((item: DataItemTaskProp) =>
           item.type === TYPE_TASK.COMMON_TYPE
             ? listDataCommon.push(item)
             : listDataOther.push(item)

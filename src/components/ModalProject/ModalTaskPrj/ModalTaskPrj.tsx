@@ -1,222 +1,170 @@
+import * as React from "react";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
-  Select,
-  MenuItem,
-  ListSubheader,
-  TextField,
-  InputAdornment
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Checkbox
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { Grid } from "@mui/material";
-import {
-  TextareaAutosize,
-  FormControlLabel,
-  Checkbox,
-  Button
-} from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
-import { useMemo, useState } from "react";
+import "./ModalTaskPrj.scss";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import ClearIcon from "@mui/icons-material/Clear";
+
+function createData(name: string, calories: number) {
+  return { name, calories, checked: false };
+}
+
+const rows = [
+  createData("Frozen yoghurt", 159),
+  createData("Ice cream sandwich", 237),
+  createData("Eclair", 262),
+  createData("Cupcake", 305),
+  createData("Gingerbread", 356)
+];
 
 export const ModalTaskPrj = () => {
-  const containsText = (text: string, searchText: string) =>
-    text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+  const [data, setData] = React.useState(rows);
+  const [selectAll, setSelectAll] = React.useState(false);
 
-  const allOptions = [
-    "Option One",
-    "Option Two",
-    "Option Three",
-    "Option Four"
-  ];
+  const handleCheckboxChange = (index: number, checked: boolean) => {
+    const updatedData = [...data];
+    updatedData[index].checked = checked;
+    setData(updatedData);
+  };
 
-  const [selectedOption, setSelectedOption] = useState(allOptions[0]);
-
-  const [searchText, setSearchText] = useState("");
-  const displayedOptions = useMemo(
-    () => allOptions.filter((option) => containsText(option, searchText)),
-    [searchText]
-  );
-
-  const [valueDate, setValueDate] = useState<Dayjs | null>(dayjs("2022-04-17"));
+  const handleSelectAllChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const checked = event.target.checked;
+    setSelectAll(checked);
+    const updatedData = data.map((row) => ({ ...row, checked }));
+    setData(updatedData);
+  };
 
   return (
-    <Grid container spacing={3} alignItems="center" padding="30px">
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Client*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <Select
-          MenuProps={{ autoFocus: false }}
-          id="search-select"
-          value={selectedOption}
-          onChange={(e) => setSelectedOption(e.target.value)}
-          onClose={() => setSearchText("")}
-          renderValue={() => selectedOption}
-          fullWidth
-          className="mr-10"
-        >
-          <ListSubheader>
-            <TextField
-              size="small"
-              autoFocus
-              placeholder="Type to search..."
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                )
-              }}
-              onChange={(e) => setSearchText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key !== "Escape") {
-                  e.stopPropagation();
+    <>
+      <TableContainer
+        component={Paper}
+        sx={{ marginBottom: "20px", marginTop: "1px !important" }}
+      >
+        <Table aria-label="simple table">
+          <TableHead>
+            <TableRow className="bg-gray-50 dark:bg-gray-800">
+              <TableCell>Task</TableCell>
+              <TableCell
+                sx={{
+                  padding: 0
+                }}
+              >
+                Billable
+                <Checkbox
+                  checked={selectAll}
+                  onChange={handleSelectAllChange}
+                  sx={{
+                    display: "block",
+                    "&:hover": {
+                      width: "fit-content"
+                    },
+                    padding: 0
+                  }}
+                />
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data.map((row, index) => (
+              <TableRow
+                key={row.name}
+                className={
+                  index % 2 === 0
+                    ? "bg-white dark:bg-gray-900"
+                    : "bg-gray-50 dark:bg-gray-800"
                 }
-              }}
-            />
-          </ListSubheader>
-          {displayedOptions.map((option, i) => (
-            <MenuItem key={i} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-      </Grid>
-      <Grid item xs={4} sx={{ display: "flex", justifyContent: "center" }}>
-        <button
-          type="button"
-          className="flex items-center text-sm font-semibold bg-red-500 text-white px-4 py-2 ml-[10px] shadow-md rounded-md transform transition duration-300 hover:bg-red-600"
-          onClick={() => {}}
+                sx={{
+                  "&:last-child td, &:last-child th": { border: 0 },
+                  "&:hover": { backgroundColor: "#f5f5f5" }
+                }}
+              >
+                <TableCell sx={{ width: "50%" }} component="th" scope="row">
+                  <ClearIcon
+                    sx={{
+                      marginRight: 2,
+                      cursor: "pointer"
+                    }}
+                  />
+                  {row.name}
+                </TableCell>
+                <TableCell sx={{ padding: 0 }}>
+                  <Checkbox
+                    checked={row.checked}
+                    onChange={(event) =>
+                      handleCheckboxChange(index, event.target.checked)
+                    }
+                    color="primary"
+                    sx={{
+                      padding: 0
+                    }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Accordion defaultExpanded className="mb-[30px]">
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel3-content"
+          id="panel3-header"
+          className="text-[15px]"
         >
-          <FontAwesomeIcon
-            className="space-y-2 mr-1 text-lg line-height-36 padding-x-16"
-            icon={faPlus}
-          />
-          New Task
-        </button>
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Name*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField id="outlined-basic" variant="outlined" fullWidth />
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Name*</span>
-      </Grid>
-      <Grid item xs={6}>
-        <TextField id="outlined-basic" variant="outlined" fullWidth />
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Date</span>
-      </Grid>
-      <Grid item xs={6}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DemoContainer components={["DatePicker", "DatePicker"]}>
-            <DatePicker
-              defaultValue={dayjs("2022-04-17")}
-              sx={{ display: "inline-block" }}
-            />
-            <span className="inline-block ml-5 mr-5">to</span>
-            <DatePicker
-              value={valueDate}
-              onChange={(newValue) => setValueDate(newValue)}
-              sx={{ display: "inline-block" }}
-            />
-          </DemoContainer>
-        </LocalizationProvider>
-      </Grid>
-      <Grid item xs={4}></Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">All User</span>
-      </Grid>
-      <Grid item xs={10}>
-        <FormControlLabel
-          control={<Checkbox defaultChecked />}
-          label="Auto add user as a member of this project when creating new user"
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Note</span>
-      </Grid>
-      <Grid item xs={10}>
-        <TextareaAutosize
-          placeholder="Minimum 3 rows"
-          minRows={2}
-          style={{
-            width: "100%",
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "4px",
-            padding: "6px 10px"
-          }}
-        />
-      </Grid>
-      <Grid item xs={2}>
-        <span className="inline-block font-bold text-sm">Project Type*</span>
-      </Grid>
-      <Grid item xs={10}>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-        <Button
-          style={{
-            borderWidth: "1px",
-            borderStyle: "solid",
-            borderColor: "#c1c1c1",
-            borderRadius: "5px",
-            padding: "10px",
-            textTransform: "none",
-            marginRight: "20px"
-          }}
-        >
-          Button
-        </Button>
-      </Grid>
-    </Grid>
+          Select task
+        </AccordionSummary>
+        <AccordionDetails>
+          <TableContainer
+            component={Paper}
+            sx={{ marginBottom: "20px", marginTop: "1px !important" }}
+          >
+            <Table aria-label="simple table">
+              <TableBody>
+                {data.map((row, index) => (
+                  <TableRow
+                    key={row.name}
+                    className={
+                      index % 2 === 0
+                        ? "bg-gray-50 dark:bg-gray-800"
+                        : "bg-white dark:bg-gray-900"
+                    }
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                      "&:hover": { backgroundColor: "#f5f5f5" }
+                    }}
+                  >
+                    <TableCell sx={{ width: "50%" }} component="th" scope="row">
+                      <AddCircleOutlineIcon
+                        sx={{
+                          marginRight: 2,
+                          cursor: "pointer"
+                        }}
+                      />
+                      {row.name}
+                    </TableCell>
+                    <TableCell sx={{ padding: 0 }}>Other Task</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </AccordionDetails>
+      </Accordion>
+    </>
   );
 };

@@ -13,7 +13,7 @@ import {
 import { ButtonControl } from "../Button/Button";
 import "./ModalTask.scss";
 import { ArrayTypeTask } from "../../constants/task/ArrayTypeTask";
-import { DataItemProp } from "../../type/DataItemProp";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
 
 interface ModalTaskProps {
@@ -26,8 +26,8 @@ interface ModalTaskProps {
       | SelectChangeEvent<number>
   ) => void;
   handleSubmit: () => void;
-  dataItemProp: Partial<DataItemProp> | undefined;
-  handleGetDataModalTask: (item: Partial<DataItemProp> | undefined) => void;
+  dataItemTaskProp: Partial<DataItemTaskProp> | undefined;
+  handleGetDataModalTask: (item: Partial<DataItemTaskProp> | undefined) => void;
 }
 
 export const ModalTask: React.FC<ModalTaskProps> = (props) => {
@@ -50,8 +50,8 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
           <div className="pb-[18px]">
             <TextField
               defaultValue={
-                props.dataItemProp && props.dataItemProp.name
-                  ? props.dataItemProp.name
+                props.dataItemTaskProp && props.dataItemTaskProp.name
+                  ? props.dataItemTaskProp.name
                   : ""
               }
               id="standard-basic"
@@ -69,8 +69,8 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
             <Select
               name="type"
               value={
-                props.dataItemProp && props.dataItemProp.id
-                  ? props.dataItemProp.type
+                props.dataItemTaskProp && props.dataItemTaskProp.id
+                  ? props.dataItemTaskProp.type
                   : 0
               }
               onChange={(e) => props.handleChange(e)}
@@ -89,14 +89,14 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
         <DialogActions className="">
           <ButtonControl
             title={TITLE_BUTTON.CANCEL}
-            dataItem={props.dataItemProp}
+            dataItem={props.dataItemTaskProp}
             handleClick={() => {
               props.handleIsOpen(), props.handleGetDataModalTask(undefined);
             }}
           />
           <ButtonControl
             title={TITLE_BUTTON.SAVE}
-            dataItem={props.dataItemProp}
+            dataItem={props.dataItemTaskProp}
             handleClick={() => {
               props.handleSubmit(), props.handleGetDataModalTask(undefined);
             }}

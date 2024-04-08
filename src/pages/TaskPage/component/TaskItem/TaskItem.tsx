@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { ButtonControl } from "../../../../components/Button/Button";
-import { DataItemProp } from "../../../../type/DataItemProp";
+import { DataItemTaskProp } from "../../../../type/DataItemTaskProp";
 import { TITLE_BUTTON } from "../../../../constants/button/ButtonConstants";
-import { Toast } from "../../../../constants/toast/Toast";
-import Swal from "sweetalert2";
+import { Toast } from "../../../../components/toast/Toast";
 import "./TaskItem.scss";
 import {
   deleteArchive,
@@ -11,17 +10,19 @@ import {
   handleDeArchive
 } from "../../../../services/TaskServices/taskServices";
 import { TYPE_TASK } from "../../../../constants/task/TypeTask";
+import { ModalConfirm } from "../../../../components/ModalConfirm/ModalConfirm";
 
 interface TaskItemProps {
   name: string;
   handleIsOpen: () => void;
   loadDataTask: () => void;
-  handleGetDataModalTask: (taskItem: Partial<DataItemProp> | undefined) => void;
-  dataItemTask: DataItemProp | undefined;
+  handleGetDataModalTask: (
+    taskItem: Partial<DataItemTaskProp> | undefined
+  ) => void;
+  dataItemTask: DataItemTaskProp | undefined;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = (props) => {
-  const [, setIsShowModalTaskConfirm] = useState(false);
   const titleBtnArchive =
     props.dataItemTask &&
     (props.dataItemTask.isDeleted
@@ -30,35 +31,61 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
       ? "Archive"
       : "");
 
-  const handleShowModalTaskConfirm = (
-    isEnabled: boolean | ((prevState: boolean) => boolean)
+  const handleArchiveOrUnArchive = (
+    taskItem: Partial<DataItemTaskProp> | undefined
   ) => {
-    setIsShowModalTaskConfirm(isEnabled);
+    ModalConfirm(`${titleBtnArchive} task`, props.dataItemTask?.name).then(
+      async (result) => {
+        if (result.isConfirmed) {
+          if (titleBtnArchive === TITLE_BUTTON.ARCHIVE) {
+            const resultDelete = await deleteArchive(taskItem?.id);
+            if (resultDelete && resultDelete.success) {
+              const toast = await Toast.fire({
+                icon: "success",
+                title: `Archive Task : ${taskItem?.name}`,
+                background: "#51a351"
+              });
+              if (toast) props.loadDataTask();
+            } else {
+              await Toast.fire({
+                icon: "error",
+                title: `${resultDelete.response.data.error.message}`,
+                background: "#bd362f"
+              });
+            }
+          } else {
+            const resultDeArchive = await handleDeArchive(taskItem?.id);
+            if (resultDeArchive && resultDeArchive.success) {
+              const toast = await Toast.fire({
+                icon: "success",
+                title: `Unarchive Task : ${taskItem?.name}`,
+                background: "#51a351"
+              });
+              if (toast) props.loadDataTask();
+            } else {
+              await Toast.fire({
+                icon: "error",
+                title: `${resultDeArchive.response.data.error.message}`,
+                background: "#bd362f"
+              });
+            }
+          }
+        }
+      }
+    );
   };
 
-  const handleArchiveOrUnArchive = (
-    taskItem: Partial<DataItemProp> | undefined
+  const handleDeleteTask = (
+    taskItem: Partial<DataItemTaskProp> | undefined
   ) => {
-    handleShowModalTaskConfirm(true);
-    Swal.fire({
-      title: "Are you sure?",
-      text: `${
-        (titleBtnArchive && titleBtnArchive + " task") ||
-        TITLE_BUTTON.DELETE + " project"
-      } : '${props.dataItemTask?.name}'?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#7cd1f9",
-      cancelButtonColor: "#efefef",
-      confirmButtonText: "Yes"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        if (titleBtnArchive === TITLE_BUTTON.ARCHIVE) {
-          const resultDelete = await deleteArchive(taskItem?.id);
+    ModalConfirm("Delete project", props.dataItemTask?.name).then(
+      async (result) => {
+        if (result.isConfirmed) {
+          const resultDelete = await deleteTask(taskItem?.id);
           if (resultDelete && resultDelete.success) {
             const toast = await Toast.fire({
               icon: "success",
-              title: `Archive Task : ${taskItem?.name}`,
+              title: "Delete Task Successfully",
               background: "#51a351"
             });
             if (toast) props.loadDataTask();
@@ -69,59 +96,9 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
               background: "#bd362f"
             });
           }
-        } else {
-          const resultDeArchive = await handleDeArchive(taskItem?.id);
-          if (resultDeArchive && resultDeArchive.success) {
-            const toast = await Toast.fire({
-              icon: "success",
-              title: `Unarchive Task : ${taskItem?.name}`,
-              background: "#51a351"
-            });
-            if (toast) props.loadDataTask();
-          } else {
-            await Toast.fire({
-              icon: "error",
-              title: `${resultDeArchive.response.data.error.message}`,
-              background: "#bd362f"
-            });
-          }
         }
       }
-    });
-  };
-
-  const handleDeleteTask = (taskItem: Partial<DataItemProp> | undefined) => {
-    handleShowModalTaskConfirm(true);
-    Swal.fire({
-      title: "Are you sure?",
-      text: `${
-        (titleBtnArchive && titleBtnArchive + " task") ||
-        TITLE_BUTTON.DELETE + " project"
-      } : '${props.dataItemTask?.name}'?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#7cd1f9",
-      cancelButtonColor: "#efefef",
-      confirmButtonText: "Yes"
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const resultDelete = await deleteTask(taskItem?.id);
-        if (resultDelete && resultDelete.success) {
-          const toast = await Toast.fire({
-            icon: "success",
-            title: "Delete Task Successfully",
-            background: "#51a351"
-          });
-          if (toast) props.loadDataTask();
-        } else {
-          await Toast.fire({
-            icon: "error",
-            title: `${resultDelete.response.data.error.message}`,
-            background: "#bd362f"
-          });
-        }
-      }
-    });
+    );
   };
 
   return (

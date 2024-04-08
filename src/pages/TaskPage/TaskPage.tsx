@@ -3,19 +3,19 @@ import "./TaskPage.scss";
 import { TaskList } from "./component/TaskList/TaskList";
 import ModalTask from "../../components/ModalTask/ModalTask";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
-import { ControlTask } from "./component/ControlTask";
-import { DataItemProp } from "../../type/DataItemProp";
+import { HeaderControlPage } from "../../components/HeaderControlPage/HeaderControlPage";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import { createOrUpdateTask } from "../../services/TaskServices/taskServices";
 import React from "react";
 import { TYPE_TASK } from "../../constants/task/TypeTask";
-import { Toast } from "../../constants/toast/Toast";
+import { Toast } from "../../components/toast/Toast";
 
 const TaskPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
   const [isCreateOrUpdate, setIsCreateOrUpdate] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [dataModalTask, setDataModalTask] = useState<
-    Partial<DataItemProp> | undefined
+    Partial<DataItemTaskProp> | undefined
   >(undefined);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +23,9 @@ const TaskPage = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleGetDataModalTask = (item: Partial<DataItemProp> | undefined) => {
+  const handleGetDataModalTask = (
+    item: Partial<DataItemTaskProp> | undefined
+  ) => {
     setDataModalTask(item);
   };
 
@@ -90,7 +92,7 @@ const TaskPage = () => {
         <div className="task-page bg-white border-gray-200 border-dashed dark:border-gray-700">
           <HeaderContainer title={"Manage Tasks"} />
           <div className="p-5">
-            <ControlTask
+            <HeaderControlPage
               searchValue={searchValue}
               isOnKeyDown={isOnKeyDown}
               handleIsOpen={handleIsOpen}
@@ -100,6 +102,7 @@ const TaskPage = () => {
               setIsOnKeyDown={(
                 prev: boolean | ((prevState: boolean) => boolean)
               ) => setIsOnKeyDown(prev)}
+              isShowControlProject={false}
             />
             <TaskList
               handleIsOpen={handleIsOpen}
@@ -114,7 +117,7 @@ const TaskPage = () => {
             handleIsOpen={handleIsOpen}
             handleSubmit={handleSubmit}
             handleChange={(e) => handleChange(e)}
-            dataItemProp={dataModalTask}
+            dataItemTaskProp={dataModalTask}
             handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
           />
         </div>
