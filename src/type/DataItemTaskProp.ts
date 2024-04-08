@@ -1,4 +1,4 @@
-export interface DataItemProp {
+export interface DataItemTaskProp {
   name: string;
   type: number;
   isDeleted: true;
