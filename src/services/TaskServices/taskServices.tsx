@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from "axios";
-import { DataItemProp } from "../../type/DataItemProp";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import axiosClient from "../axiosClient";
 
 export const getAllTasks = async () => {
@@ -12,7 +12,9 @@ export const getAllTasks = async () => {
   }
 };
 
-export const createOrUpdateTask = async (dataTask: Partial<DataItemProp>) => {
+export const createOrUpdateTask = async (
+  dataTask: Partial<DataItemTaskProp>
+) => {
   try {
     const response = await axiosClient.post(
       "/api/services/app/Task/Save",
