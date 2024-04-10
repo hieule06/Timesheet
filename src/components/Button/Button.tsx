@@ -32,10 +32,11 @@ export const ButtonControl: React.FC<ButtonProps> = (props) => {
         props.handleClick(props.dataItem);
       }}
       disabled={
-        (props.title === TITLE_BUTTON.SAVE && !props.dataItem?.name) ||
-        (props.dataItem?.type !== TYPE_TASK.OTHER_TYPE &&
-          props.title === TITLE_BUTTON.DELETE &&
-          !props.dataItem?.isDeleted)
+        // (props.title === TITLE_BUTTON.SAVE && !props.dataItem?.name) ||
+        // (props.dataItem?.type !== TYPE_TASK.OTHER_TYPE &&
+        //   props.title === TITLE_BUTTON.DELETE &&
+        // !props.dataItem?.isDeleted)
+        false
       }
     >
       {props.title}

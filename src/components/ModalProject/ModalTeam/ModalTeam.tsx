@@ -25,8 +25,21 @@ import { useMemo, useState } from "react";
 import "./ModalTeam.scss";
 import { ButtonControl } from "../../Button/Button";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
+import { TypeDataUser } from "../../../type/TypeDataUser";
+import ClearIcon from "@mui/icons-material/Clear";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
-export const ModalTeam = () => {
+interface ModalTeamProps {
+  dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
+  handleGetDataModalProject: (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => void;
+  dataListUserNotPagging: TypeDataUser[] | undefined;
+}
+
+export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
+  const [isShowAddMember, setIsShowAddMember] = useState<boolean>(false);
   const [isOnFocus, setIsOnFocus] = useState<boolean>(false);
   const [isOnFocusSearchUser, setIsOnFocusSearchUser] =
     useState<boolean>(false);
@@ -74,7 +87,12 @@ export const ModalTeam = () => {
     <div className="flex">
       <Accordion
         defaultExpanded
-        sx={{ padding: "0 24px", marginTop: "1px !important", flex: "1" }}
+        sx={{
+          padding: "0 24px",
+          marginTop: "1px !important",
+          flex: "1",
+          overflowX: "hidden"
+        }}
         className="wrapper-modal-team"
       >
         <AccordionSummary
@@ -88,7 +106,7 @@ export const ModalTeam = () => {
         <AccordionDetails>
           <Box sx={{ display: "flex" }}>
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox />}
               label={
                 <span className="text-[15px] font-bold">
                   Show deactive member
@@ -96,7 +114,7 @@ export const ModalTeam = () => {
               }
             />
             <FormControlLabel
-              control={<Checkbox defaultChecked />}
+              control={<Checkbox />}
               label={
                 <span className="text-[15px] font-bold">
                   Show Inactive user
@@ -129,10 +147,69 @@ export const ModalTeam = () => {
         </AccordionDetails>
         <AccordionActions>
           <ButtonControl
-            handleClick={() => {}}
-            title="Add users"
+            handleClick={() => {
+              setIsShowAddMember(!isShowAddMember);
+            }}
+            title={!isShowAddMember ? "Add users" : "Exit add"}
             dataItem={undefined}
           />
+        </AccordionActions>
+        <AccordionActions>
+          <TableContainer
+            component={Paper}
+            sx={{
+              marginTop: "20px",
+              boxShadow: "none",
+              maxHeight: "45vh"
+            }}
+          >
+            <Table aria-label="simple table">
+              <TableBody>
+                {props.dataItemProjectProp?.users?.map((row, index) =>
+                  props.dataListUserNotPagging?.map(
+                    (item) =>
+                      row.userId === item.id && (
+                        <TableRow
+                          key={row.id}
+                          className={
+                            index % 2 === 0
+                              ? "bg-gray-50 dark:bg-gray-800"
+                              : "bg-white dark:bg-gray-900"
+                          }
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                            "&:hover": { backgroundColor: "#f5f5f5" }
+                          }}
+                        >
+                          <TableCell sx={{ width: "50%" }}>
+                            <div className="flex">
+                              <ClearIcon
+                                sx={{
+                                  marginRight: 2,
+                                  cursor: "pointer"
+                                }}
+                              />
+                              <div className="flex flex-col">
+                                <p className="text-sx font-bold">{item.name}</p>
+                                <p className="text-sx">{item.emailAddress}</p>
+                              </div>
+                              <div className="w-[100%]">
+                                <ArrowForwardIosIcon
+                                  sx={{
+                                    cursor: "pointer",
+                                    float: "right"
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  )
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </AccordionActions>
       </Accordion>
       <Accordion
@@ -141,7 +218,9 @@ export const ModalTeam = () => {
           padding: "0 24px",
           marginTop: "1px !important",
           marginBottom: "16px !important",
-          flex: "1"
+          flex: "1",
+          overflowX: "hidden",
+          display: `${isShowAddMember ? "block" : "none"}`
         }}
         className="wrapper-modal-team"
       >
@@ -242,36 +321,47 @@ export const ModalTeam = () => {
             component={Paper}
             sx={{
               marginTop: "20px",
-              boxShadow: "none"
+              boxShadow: "none",
+              maxHeight: "45vh"
             }}
           >
             <Table aria-label="simple table">
               <TableBody>
-                {data.map((row, index) => (
-                  <TableRow
-                    key={row.name}
-                    className={
-                      index % 2 === 0
-                        ? "bg-gray-50 dark:bg-gray-800"
-                        : "bg-white dark:bg-gray-900"
-                    }
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      "&:hover": { backgroundColor: "#f5f5f5" }
-                    }}
-                  >
-                    <TableCell sx={{ width: "50%" }} component="th" scope="row">
-                      <ArrowBackIosIcon
-                        sx={{
-                          marginRight: 2,
-                          cursor: "pointer"
-                        }}
-                      />
-                      {row.name}
-                    </TableCell>
-                    <TableCell sx={{ padding: 0 }}>Other Task</TableCell>
-                  </TableRow>
-                ))}
+                {props.dataListUserNotPagging &&
+                  props.dataListUserNotPagging.map(
+                    (row, index) =>
+                      props.dataItemProjectProp?.users?.every(
+                        (item) => item.userId !== row.id
+                      ) && (
+                        <TableRow
+                          key={row.id}
+                          className={
+                            index % 2 === 0
+                              ? "bg-gray-50 dark:bg-gray-800"
+                              : "bg-white dark:bg-gray-900"
+                          }
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                            "&:hover": { backgroundColor: "#f5f5f5" }
+                          }}
+                        >
+                          <TableCell sx={{ width: "50%" }}>
+                            <div className="flex">
+                              <ArrowBackIosIcon
+                                sx={{
+                                  marginRight: 2,
+                                  cursor: "pointer"
+                                }}
+                              />
+                              <div className="flex flex-col">
+                                <p className="text-sx font-bold">{row.name}</p>
+                                <p className="text-sx">{row.emailAddress}</p>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
+                  )}
               </TableBody>
             </Table>
           </TableContainer>

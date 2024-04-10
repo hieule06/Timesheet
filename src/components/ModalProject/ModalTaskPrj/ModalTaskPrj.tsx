@@ -16,27 +16,47 @@ import {
 import "./ModalTaskPrj.scss";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ClearIcon from "@mui/icons-material/Clear";
+import { DataItemTaskProp } from "../../../type/DataItemTaskProp";
+import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
+import { ArrayTypeTask } from "../../../constants/task/ArrayTypeTask";
 
-function createData(name: string, calories: number) {
-  return { name, calories, checked: false };
+interface ModalTaskPrjProps {
+  dataListTask: DataItemTaskProp[] | undefined;
+  dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
+  handleGetDataModalProject: (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => void;
 }
 
-const rows = [
-  createData("Frozen yoghurt", 159),
-  createData("Ice cream sandwich", 237),
-  createData("Eclair", 262),
-  createData("Cupcake", 305),
-  createData("Gingerbread", 356)
-];
+export const ModalTaskPrj: React.FC<ModalTaskPrjProps> = (props) => {
+  const [taskSelected, setTaskSelected] = React.useState(
+    props.dataItemProjectProp?.tasks
+  );
+  const [selectAll, setSelectAll] = React.useState<boolean>(
+    !!props.dataItemProjectProp?.tasks?.every((item) => item && item.billable)
+  );
 
-export const ModalTaskPrj = () => {
-  const [data, setData] = React.useState(rows);
-  const [selectAll, setSelectAll] = React.useState(false);
-
-  const handleCheckboxChange = (index: number, checked: boolean) => {
-    const updatedData = [...data];
-    updatedData[index].checked = checked;
-    setData(updatedData);
+  const handleCheckboxChange = (taskId: number, checked: boolean) => {
+    const updatedTasks =
+      taskSelected &&
+      taskSelected.map((task) =>
+        task && task.taskId === taskId
+          ? {
+              ...task,
+              billable: checked
+            }
+          : {
+              ...task
+            }
+      );
+    const checkSelectAll =
+      updatedTasks && updatedTasks.every((task) => task.billable);
+    setSelectAll(!!checkSelectAll);
+    setTaskSelected(updatedTasks);
+    props.handleGetDataModalProject({
+      ...props.dataItemProjectProp,
+      tasks: updatedTasks
+    });
   };
 
   const handleSelectAllChange = (
@@ -44,8 +64,18 @@ export const ModalTaskPrj = () => {
   ) => {
     const checked = event.target.checked;
     setSelectAll(checked);
-    const updatedData = data.map((row) => ({ ...row, checked }));
-    setData(updatedData);
+    const updatedTasks =
+      taskSelected &&
+      taskSelected.map((task) => ({
+        ...task,
+        billable: checked
+      }));
+
+    setTaskSelected(updatedTasks);
+    props.handleGetDataModalProject({
+      ...props.dataItemProjectProp,
+      tasks: updatedTasks
+    });
   };
 
   return (
@@ -79,42 +109,74 @@ export const ModalTaskPrj = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, index) => (
-              <TableRow
-                key={row.name}
-                className={
-                  index % 2 === 0
-                    ? "bg-white dark:bg-gray-900"
-                    : "bg-gray-50 dark:bg-gray-800"
-                }
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                  "&:hover": { backgroundColor: "#f5f5f5" }
-                }}
-              >
-                <TableCell sx={{ width: "50%" }} component="th" scope="row">
-                  <ClearIcon
-                    sx={{
-                      marginRight: 2,
-                      cursor: "pointer"
-                    }}
-                  />
-                  {row.name}
-                </TableCell>
-                <TableCell sx={{ padding: 0 }}>
-                  <Checkbox
-                    checked={row.checked}
-                    onChange={(event) =>
-                      handleCheckboxChange(index, event.target.checked)
-                    }
-                    color="primary"
-                    sx={{
-                      padding: 0
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+            {taskSelected &&
+              taskSelected.map(
+                (row, index) =>
+                  row &&
+                  row.taskId && (
+                    <TableRow
+                      key={row && row.taskId}
+                      className={
+                        index % 2 === 0
+                          ? "bg-white dark:bg-gray-900"
+                          : "bg-gray-50 dark:bg-gray-800"
+                      }
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                        "&:hover": { backgroundColor: "#f5f5f5" }
+                      }}
+                    >
+                      <TableCell
+                        sx={{ width: "50%" }}
+                        component="th"
+                        scope="row"
+                      >
+                        <span
+                          onClick={() => {
+                            const updatedTasks =
+                              taskSelected &&
+                              taskSelected.filter(
+                                (task) => task && task.taskId !== row.taskId
+                              );
+
+                            setTaskSelected(updatedTasks);
+                            props.handleGetDataModalProject({
+                              ...props.dataItemProjectProp,
+                              tasks: updatedTasks
+                            });
+                          }}
+                        >
+                          <ClearIcon
+                            sx={{
+                              marginRight: 2,
+                              cursor: "pointer"
+                            }}
+                          />
+                        </span>
+                        {props.dataListTask &&
+                          props.dataListTask.map(
+                            (task) => row && row.taskId === task.id && task.name
+                          )}
+                      </TableCell>
+                      <TableCell sx={{ padding: 0 }}>
+                        <Checkbox
+                          checked={row && row.billable}
+                          defaultChecked={row && row.billable}
+                          onChange={(event) =>
+                            handleCheckboxChange(
+                              row && row.taskId,
+                              event.target.checked
+                            )
+                          }
+                          color="primary"
+                          sx={{
+                            padding: 0
+                          }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  )
+              )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -135,31 +197,60 @@ export const ModalTaskPrj = () => {
           >
             <Table aria-label="simple table">
               <TableBody>
-                {data.map((row, index) => (
-                  <TableRow
-                    key={row.name}
-                    className={
-                      index % 2 === 0
-                        ? "bg-gray-50 dark:bg-gray-800"
-                        : "bg-white dark:bg-gray-900"
-                    }
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                      "&:hover": { backgroundColor: "#f5f5f5" }
-                    }}
-                  >
-                    <TableCell sx={{ width: "50%" }} component="th" scope="row">
-                      <AddCircleOutlineIcon
-                        sx={{
-                          marginRight: 2,
-                          cursor: "pointer"
-                        }}
-                      />
-                      {row.name}
-                    </TableCell>
-                    <TableCell sx={{ padding: 0 }}>Other Task</TableCell>
-                  </TableRow>
-                ))}
+                {props.dataListTask &&
+                  props.dataListTask.map(
+                    (row, index) =>
+                      !row.isDeleted &&
+                      !taskSelected?.some(
+                        (item) => item && row.id === item.taskId
+                      ) && (
+                        <TableRow
+                          key={row.id}
+                          className={
+                            index % 2 === 0
+                              ? "bg-gray-50 dark:bg-gray-800"
+                              : "bg-white dark:bg-gray-900"
+                          }
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                            "&:hover": { backgroundColor: "#f5f5f5" }
+                          }}
+                        >
+                          <TableCell
+                            sx={{ width: "50%" }}
+                            component="th"
+                            scope="row"
+                            onClick={() => {
+                              const taskSelectedNew = {
+                                taskId: row.id,
+                                billable: true
+                              };
+                              setTaskSelected([
+                                ...taskSelected,
+                                taskSelectedNew
+                              ]);
+                              props.handleGetDataModalProject({
+                                ...props.dataItemProjectProp,
+                                tasks: [...taskSelected, taskSelectedNew]
+                              });
+                            }}
+                          >
+                            <AddCircleOutlineIcon
+                              sx={{
+                                marginRight: 2,
+                                cursor: "pointer"
+                              }}
+                            />
+                            {row.name}
+                          </TableCell>
+                          <TableCell sx={{ padding: 0 }}>
+                            {row.type === ArrayTypeTask[0].type
+                              ? ArrayTypeTask[0].titleTask
+                              : ArrayTypeTask[1].titleTask}
+                          </TableCell>
+                        </TableRow>
+                      )
+                  )}
               </TableBody>
             </Table>
           </TableContainer>

@@ -18,6 +18,12 @@ import { Toast } from "../toast/Toast";
 import { ModalConfirm } from "../ModalConfirm/ModalConfirm";
 import { TITLE_TOAST } from "../../constants/toast/ToastConstants";
 import { getAllClients } from "../../services/Customer/customerService";
+import { TypeDataModalProject } from "../../type/TypeDataModalProject";
+import { getAllTasks } from "../../services/TaskServices/taskServices";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
+import { TypeListCustomer } from "../../type/TypeListCustomer";
+import { getUserNotPagging } from "../../services/User/userService";
+import { TypeDataUser } from "../../type/TypeDataUser";
 
 interface ButtonActionProps {
   handleIsOpenModal: () => void;
@@ -27,9 +33,13 @@ interface ButtonActionProps {
   dataItemProject: DataItemProjectProp;
   isOnKeyDown: boolean;
   handleGetDataModalProject: (
-    item: Partial<DataItemProjectProp> | undefined
+    item: Partial<TypeDataModalProject> | undefined
   ) => void;
-  handleGetListCusTomer: (listCustomer: string[]) => void;
+  handleGetListCusTomer: (listCustomer: TypeListCustomer[]) => void;
+  handleGetListTaskPrj: (listTask: DataItemTaskProp[] | undefined) => void;
+  handleGetListUserNotPagging: (
+    listUserNotPagging: TypeDataUser[] | undefined
+  ) => void;
 }
 
 export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
@@ -160,6 +170,14 @@ export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
               props.handleGetDataModalProject(dataItemProject.result);
             }
             handleClose(), props.handleIsOpenModal();
+            const listTask = await getAllTasks();
+            if (listTask && listTask.result) {
+              props.handleGetListTaskPrj(listTask.result);
+            }
+            const listUserNotPagging = await getUserNotPagging();
+            if (listUserNotPagging && listUserNotPagging.result) {
+              props.handleGetListUserNotPagging(listUserNotPagging.result);
+            }
           }}
           sx={{ fontSize: "14px" }}
         >

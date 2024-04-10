@@ -19,6 +19,10 @@ import { ButtonControl } from "../Button/Button";
 import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
 import { TypeDataModalProject } from "../../type/TypeDataModalProject";
 import { TypeListCustomer } from "../../type/TypeListCustomer";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
+import { DataItemProjectProp } from "../../type/DataItemProjectProp";
+import { TypeDataUser } from "../../type/TypeDataUser";
+import { createOrUpdateProject } from "../../services/ProjectServices/projectServices";
 
 interface ModalProjectProps {
   handleIsOpenModal: () => void;
@@ -26,6 +30,11 @@ interface ModalProjectProps {
   isOpenModal: boolean;
   dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
   dataListCustomer: TypeListCustomer[] | undefined;
+  dataListTask: DataItemTaskProp[] | undefined;
+  dataListUserNotPagging: TypeDataUser[] | undefined;
+  handleGetDataModalProject: (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => void;
 }
 
 interface TabPanelProps {
@@ -104,12 +113,15 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
               className="pt-5 bg-white"
             >
               <Tab
+                sx={{ maxWidth: "180px" }}
                 label={<span className="normal-case font-medium">General</span>}
               />
               <Tab
+                sx={{ maxWidth: "180px" }}
                 label={<span className="normal-case font-medium">Team</span>}
               />
               <Tab
+                sx={{ maxWidth: "180px" }}
                 label={<span className="normal-case font-medium">Tasks</span>}
               />
             </Tabs>
@@ -118,15 +130,30 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
             <ModalGeneral
               dataItemProjectProp={props.dataItemProjectProp}
               dataListCustomer={props.dataListCustomer}
+              handleGetDataModalProject={(
+                item: Partial<DataItemProjectProp> | undefined
+              ) => props.handleGetDataModalProject(item)}
             />
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <ModalTeam />
+            <ModalTeam
+              dataItemProjectProp={props.dataItemProjectProp}
+              dataListUserNotPagging={props.dataListUserNotPagging}
+              handleGetDataModalProject={(
+                item: Partial<DataItemProjectProp> | undefined
+              ) => props.handleGetDataModalProject(item)}
+            />
           </TabPanel>
 
           <TabPanel value={value} index={2}>
-            <ModalTaskPrj />
+            <ModalTaskPrj
+              dataListTask={props.dataListTask}
+              dataItemProjectProp={props.dataItemProjectProp}
+              handleGetDataModalProject={(
+                item: Partial<DataItemProjectProp> | undefined
+              ) => props.handleGetDataModalProject(item)}
+            />
           </TabPanel>
         </Box>
         <DialogActions className="left-0 bg-white">
@@ -138,7 +165,9 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
           <ButtonControl
             title={TITLE_BUTTON.SAVE}
             dataItem={undefined}
-            handleClick={() => {}}
+            handleClick={async () => {
+              await createOrUpdateProject(props.dataItemProjectProp);
+            }}
           />
         </DialogActions>
       </Dialog>

@@ -3,6 +3,9 @@ import "./ProjectList.scss";
 import { getAllProjects } from "../../../../services/ProjectServices/projectServices";
 import { ProjectItem } from "../ProjectItem/ProjectItem";
 import { TypeDataModalProject } from "../../../../type/TypeDataModalProject";
+import { TypeListCustomer } from "../../../../type/TypeListCustomer";
+import { DataItemTaskProp } from "../../../../type/DataItemTaskProp";
+import { TypeDataUser } from "../../../../type/TypeDataUser";
 
 interface ProjectListProps {
   handleIsOpenModal: () => void;
@@ -15,7 +18,11 @@ interface ProjectListProps {
   handleGetDataModalProject: (
     item: Partial<TypeDataModalProject> | undefined
   ) => void;
-  handleGetListCusTomer: (listCustomer: string[]) => void;
+  handleGetListCusTomer: (listCustomer: TypeListCustomer[]) => void;
+  handleGetListTaskPrj: (listTask: DataItemTaskProp[] | undefined) => void;
+  handleGetListUserNotPagging: (
+    listUserNotPagging: TypeDataUser[] | undefined
+  ) => void;
 }
 
 interface ProjectItem {
@@ -99,6 +106,12 @@ export const ProjectList: React.FC<ProjectListProps> = (props) => {
                       ) => props.handleGetDataModalProject(item)}
                       handleGetListCusTomer={(listCustomer) =>
                         props.handleGetListCusTomer(listCustomer)
+                      }
+                      handleGetListTaskPrj={(listTask) =>
+                        props.handleGetListTaskPrj(listTask)
+                      }
+                      handleGetListUserNotPagging={(listUserNotPagging) =>
+                        props.handleGetListUserNotPagging(listUserNotPagging)
                       }
                     />
                   )

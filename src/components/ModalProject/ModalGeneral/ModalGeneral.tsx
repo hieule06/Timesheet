@@ -25,6 +25,9 @@ import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
 interface ModalGeneralProps {
   dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
   dataListCustomer: TypeListCustomer[] | undefined;
+  handleGetDataModalProject: (
+    item: Partial<TypeDataModalProject> | undefined
+  ) => void;
 }
 
 export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
@@ -45,8 +48,6 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
     [searchText]
   );
 
-  const [dateTimeStart] = useState();
-
   return (
     <Grid
       container
@@ -62,9 +63,14 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
         <Select
           MenuProps={{ autoFocus: false }}
           id="search-select"
+          name="customerId"
           value={selectedOption || props.dataItemProjectProp?.customerId}
           defaultValue={props.dataItemProjectProp?.customerId}
           onChange={(e) => {
+            props.handleGetDataModalProject({
+              ...props.dataItemProjectProp,
+              [e.target.name]: e.target.value
+            });
             setSelectedOption(e.target.value as number);
           }}
           onClose={() => setSearchText("")}
@@ -112,10 +118,17 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
       </Grid>
       <Grid item xs={6}>
         <TextField
+          name="name"
           id="outlined-basic"
           variant="outlined"
           fullWidth
           value={props.dataItemProjectProp && props.dataItemProjectProp.name}
+          onChange={(e) =>
+            props.handleGetDataModalProject({
+              ...props.dataItemProjectProp,
+              [e.target.name]: e.target.value
+            })
+          }
         />
       </Grid>
       <Grid item xs={4}></Grid>
@@ -124,10 +137,17 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
       </Grid>
       <Grid item xs={6}>
         <TextField
+          name="code"
           id="outlined-basic"
           variant="outlined"
           fullWidth
           value={props.dataItemProjectProp && props.dataItemProjectProp.code}
+          onChange={(e) =>
+            props.handleGetDataModalProject({
+              ...props.dataItemProjectProp,
+              [e.target.name]: e.target.value
+            })
+          }
         />
       </Grid>
       <Grid item xs={4}></Grid>
@@ -141,15 +161,25 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
               defaultValue={dayjs(
                 props.dataItemProjectProp && props.dataItemProjectProp.timeStart
               )}
+              onChange={(e) =>
+                props.handleGetDataModalProject({
+                  ...props.dataItemProjectProp,
+                  timeStart: dayjs(e).format()
+                })
+              }
               sx={{ display: "inline-block" }}
             />
             <span className="inline-block ml-5 mr-5">to</span>
             <DatePicker
-              value={dateTimeStart}
               defaultValue={dayjs(
                 props.dataItemProjectProp && props.dataItemProjectProp.timeEnd
               )}
-              // onChange={(newValue) => setDateTimeStart(newValue)}
+              onChange={(e) =>
+                props.handleGetDataModalProject({
+                  ...props.dataItemProjectProp,
+                  timeEnd: dayjs(e).format()
+                })
+              }
               sx={{ display: "inline-block" }}
             />
           </DemoContainer>
@@ -163,9 +193,16 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
         <FormControlLabel
           control={
             <Checkbox
+              name="isAllUserBelongTo"
               defaultChecked={
                 props.dataItemProjectProp &&
                 props.dataItemProjectProp.isAllUserBelongTo
+              }
+              onChange={(e) =>
+                props.handleGetDataModalProject({
+                  ...props.dataItemProjectProp,
+                  [e.target.name]: e.target.checked
+                })
               }
             />
           }
@@ -177,6 +214,7 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
       </Grid>
       <Grid item xs={10}>
         <TextareaAutosize
+          name="note"
           placeholder="Minimum 3 rows"
           minRows={2}
           style={{
@@ -190,6 +228,12 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
           value={
             (props.dataItemProjectProp && props.dataItemProjectProp.note) ||
             undefined
+          }
+          onChange={(e) =>
+            props.handleGetDataModalProject({
+              ...props.dataItemProjectProp,
+              [e.target.name]: e.target.value
+            })
           }
         />
       </Grid>
@@ -232,7 +276,10 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
                     }
                   }}
                   onClick={() =>
-                    console.log("first: ", projectType.projectType)
+                    props.handleGetDataModalProject({
+                      ...props.dataItemProjectProp,
+                      projectType: projectType.projectType
+                    })
                   }
                 >
                   {projectType.title}

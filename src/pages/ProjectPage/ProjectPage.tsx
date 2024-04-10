@@ -6,6 +6,9 @@ import { HeaderControlPage } from "../../components/HeaderControlPage/HeaderCont
 import { ProjectList } from "./component/ProjectList/ProjectList";
 import { DataItemProjectProp } from "../../type/DataItemProjectProp";
 import { TypeDataModalProject } from "../../type/TypeDataModalProject";
+import { TypeListCustomer } from "../../type/TypeListCustomer";
+import { DataItemTaskProp } from "../../type/DataItemTaskProp";
+import { TypeDataUser } from "../../type/TypeDataUser";
 
 const ProjectPage = () => {
   const [isOnKeyDown, setIsOnKeyDown] = useState(false);
@@ -15,7 +18,11 @@ const ProjectPage = () => {
   const [dataModalProject, setDataModalProject] = useState<
     Partial<TypeDataModalProject> | undefined
   >(undefined);
-  const [listCustomer, setListCustomer] = useState<string[]>();
+  const [listCustomer, setListCustomer] = useState<TypeListCustomer[]>();
+  const [listTask, setListTask] = useState<DataItemTaskProp[] | undefined>();
+  const [listUserNotPagging, setListUserNotPagging] = useState<
+    TypeDataUser[] | undefined
+  >();
 
   const handleIsOpen = () => {
     setIsOpen(!isOpen);
@@ -40,8 +47,18 @@ const ProjectPage = () => {
     setDataModalProject(item);
   };
 
-  const handleGetListCusTomer = (listCustomer: string[]) => {
+  const handleGetListCusTomer = (listCustomer: TypeListCustomer[]) => {
     setListCustomer(listCustomer);
+  };
+
+  const handleGetListTaskPrj = (listTask: DataItemTaskProp[] | undefined) => {
+    setListTask(listTask);
+  };
+
+  const handleGetListUserNotPagging = (
+    listUserNotPagging: TypeDataUser[] | undefined
+  ) => {
+    setListUserNotPagging(listUserNotPagging);
   };
 
   /* const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +113,12 @@ const ProjectPage = () => {
               handleGetListCusTomer={(listCustomer) =>
                 handleGetListCusTomer(listCustomer)
               }
+              handleGetListTaskPrj={(listTask) =>
+                handleGetListTaskPrj(listTask)
+              }
+              handleGetListUserNotPagging={(listUserNotPagging) =>
+                handleGetListUserNotPagging(listUserNotPagging)
+              }
             />
           </div>
         </div>
@@ -106,6 +129,11 @@ const ProjectPage = () => {
         isOpenModal={isOpenModal}
         dataItemProjectProp={dataModalProject}
         dataListCustomer={listCustomer}
+        dataListTask={listTask}
+        dataListUserNotPagging={listUserNotPagging}
+        handleGetDataModalProject={(
+          item: Partial<DataItemProjectProp> | undefined
+        ) => handleGetDataModalProject(item)}
       />
     </div>
   );

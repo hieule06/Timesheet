@@ -4,6 +4,9 @@ import { ButtonAction } from "../../../../components/ButtonAction/ButtonAction";
 import React from "react";
 import { DataItemProjectProp } from "../../../../type/DataItemProjectProp";
 import { TypeDataModalProject } from "../../../../type/TypeDataModalProject";
+import { TypeListCustomer } from "../../../../type/TypeListCustomer";
+import { DataItemTaskProp } from "../../../../type/DataItemTaskProp";
+import { TypeDataUser } from "../../../../type/TypeDataUser";
 
 interface ProjectItemProps {
   dataItemProject: DataItemProjectProp;
@@ -15,7 +18,11 @@ interface ProjectItemProps {
   handleGetDataModalProject: (
     item: Partial<TypeDataModalProject> | undefined
   ) => void;
-  handleGetListCusTomer: (listCustomer: string[]) => void;
+  handleGetListCusTomer: (listCustomer: TypeListCustomer[]) => void;
+  handleGetListTaskPrj: (listTask: DataItemTaskProp[] | undefined) => void;
+  handleGetListUserNotPagging: (
+    listUserNotPagging: TypeDataUser[] | undefined
+  ) => void;
 }
 export const ProjectItem: React.FC<ProjectItemProps> = (props) => {
   return (
@@ -65,6 +72,12 @@ export const ProjectItem: React.FC<ProjectItemProps> = (props) => {
           ) => props.handleGetDataModalProject(item)}
           handleGetListCusTomer={(listCustomer) =>
             props.handleGetListCusTomer(listCustomer)
+          }
+          handleGetListTaskPrj={(listTask) =>
+            props.handleGetListTaskPrj(listTask)
+          }
+          handleGetListUserNotPagging={(listUserNotPagging) =>
+            props.handleGetListUserNotPagging(listUserNotPagging)
           }
         />
       </tr>

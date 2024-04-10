@@ -50,7 +50,7 @@ export const HeaderControlPage: React.FC<HeaderControlPageProps> = (props) => {
                 className="space-y-2 mr-1 text-lg line-height-36 padding-x-16"
                 icon={faPlus}
               />
-              New Task
+              New Project
             </button>
           </div>
           <FormControl sx={{ m: 1, width: "25%", height: "50px" }}>
