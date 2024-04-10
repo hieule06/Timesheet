@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 import axiosClient from "../axiosClient";
+import { TypeDataModalProject } from "../../type/TypeDataModalProject";
 
 export const getAllProjects = async (params: {
   status: number | null;
@@ -73,5 +74,20 @@ export const deleteProject = async (
     return response.data;
   } catch (error) {
     return error;
+  }
+};
+
+export const createOrUpdateProject = async (
+  dataProject: Partial<TypeDataModalProject> | undefined
+) => {
+  try {
+    const response = await axiosClient.post(
+      "/api/services/app/Project/Save",
+      dataProject
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
   }
 };
