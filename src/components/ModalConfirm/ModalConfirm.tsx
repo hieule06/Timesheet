@@ -6,7 +6,7 @@ export const ModalConfirm = (
 ) =>
   Swal.fire({
     title: "Are you sure?",
-    text: `${titleBtnArchive} : '${name}'?`,
+    text: `${titleBtnArchive} ${name ? `: ${name} ?` : ""}`,
     icon: "warning",
     showCancelButton: true,
     confirmButtonColor: "#7cd1f9",

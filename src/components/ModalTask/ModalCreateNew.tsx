@@ -2,21 +2,19 @@ import React, { ChangeEvent } from "react";
 import {
   Dialog,
   DialogTitle,
-  DialogContent,
   DialogActions,
-  TextField,
-  MenuItem,
-  Select,
-  InputLabel,
   SelectChangeEvent
 } from "@mui/material";
 import { ButtonControl } from "../Button/Button";
-import "./ModalTask.scss";
-import { ArrayTypeTask } from "../../constants/task/ArrayTypeTask";
+import "./ModalCreateNew.scss";
 import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import { TITLE_BUTTON } from "../../constants/button/ButtonConstants";
+import ModalClient from "./ModalClient/ModalClient";
+import ModalNewTask from "./ModalNewTask/ModalNewTask";
 
-interface ModalTaskProps {
+interface ModalCreateNewProps {
+  isClient?: boolean;
+  disable?: boolean;
   isOpen: boolean;
   handleIsOpen: () => void;
   handleChange: (
@@ -30,7 +28,7 @@ interface ModalTaskProps {
   handleGetDataModalTask: (item: Partial<DataItemTaskProp> | undefined) => void;
 }
 
-export const ModalTask: React.FC<ModalTaskProps> = (props) => {
+export const ModalCreateNew: React.FC<ModalCreateNewProps> = (props) => {
   return (
     <div className="modal">
       <Dialog
@@ -46,46 +44,17 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
             New Task
           </h3>
         </DialogTitle>
-        <DialogContent>
-          <div className="pb-[18px]">
-            <TextField
-              defaultValue={
-                props.dataItemTaskProp && props.dataItemTaskProp.name
-                  ? props.dataItemTaskProp.name
-                  : ""
-              }
-              id="standard-basic"
-              label={<span className="text-sm">Name</span>}
-              name="name"
-              variant="standard"
-              required
-              onChange={(e) => props.handleChange(e)}
-            />
-          </div>
-          <div className="pb-[18px]">
-            <InputLabel>
-              <span className="text-xs">Task type</span>
-            </InputLabel>
-            <Select
-              name="type"
-              value={
-                props.dataItemTaskProp && props.dataItemTaskProp.id
-                  ? props.dataItemTaskProp.type
-                  : 0
-              }
-              onChange={(e) => props.handleChange(e)}
-              displayEmpty
-              inputProps={{ "aria-label": "Without label" }}
-              variant="standard"
-            >
-              {ArrayTypeTask.map((item, index) => (
-                <MenuItem value={item.type} className="!text-sm" key={index}>
-                  {item.titleTask}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-        </DialogContent>
+        {props.isClient ? (
+          <ModalClient
+            dataItemTaskProp={props.dataItemTaskProp}
+            handleChange={(e) => props.handleChange(e)}
+          />
+        ) : (
+          <ModalNewTask
+            dataItemTaskProp={props.dataItemTaskProp}
+            handleChange={(e) => props.handleChange(e)}
+          />
+        )}
         <DialogActions className="">
           <ButtonControl
             title={TITLE_BUTTON.CANCEL}
@@ -100,6 +69,8 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
             handleClick={() => {
               props.handleSubmit(), props.handleGetDataModalTask(undefined);
             }}
+            disabled={props.disable}
+            isClient={props.isClient}
           />
         </DialogActions>
       </Dialog>
@@ -107,4 +78,4 @@ export const ModalTask: React.FC<ModalTaskProps> = (props) => {
   );
 };
 
-export default ModalTask;
+export default ModalCreateNew;

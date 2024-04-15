@@ -21,8 +21,13 @@ import {
 } from "../../../constants/project/TypeBtnModalGeneral";
 import { TypeListCustomer } from "../../../type/TypeListCustomer";
 import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
-import ModalTask from "../../ModalTask/ModalTask";
-import { DataItemTaskProp } from "../../../type/DataItemTaskProp";
+import ModalCreateNew from "../../ModalTask/ModalCreateNew";
+import {
+  createOrUpdateClient,
+  getAllClients
+} from "../../../services/Customer/customerService";
+import { Toast } from "../../toast/Toast";
+import { DataItemClientProp } from "../../../type/DataItemClientProp";
 
 interface ModalGeneralProps {
   dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
@@ -30,13 +35,14 @@ interface ModalGeneralProps {
   handleGetDataModalProject: (
     item: Partial<TypeDataModalProject> | undefined
   ) => void;
+  handleGetListCusTomer?: (listCustomer: TypeListCustomer[]) => void;
 }
 
 export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
   const [isShowModalClient, setIsShowModalClient] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [dataModalTask, setDataModalTask] = useState<
-    Partial<DataItemTaskProp> | undefined
+  const [dataModalClient, setDataModalClient] = useState<
+    Partial<DataItemClientProp> | undefined
   >(undefined);
   const containsText = (option: TypeListCustomer, searchText: string) =>
     `${option.name} - [${option.code}]`
@@ -59,10 +65,38 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
     setIsShowModalClient(!isShowModalClient);
   };
 
-  const handleSubmit = async () => {};
-
+  const handleSubmit = async () => {
+    if (dataModalClient) {
+      const result = await createOrUpdateClient(dataModalClient);
+      if (result && result.success) {
+        setIsShowModalClient(false);
+        setDataModalClient(undefined);
+        await Toast.fire({
+          icon: "success",
+          title: `Created Client : ${dataModalClient?.name}`,
+          background: "#51a351"
+        });
+        const listClients = await getAllClients();
+        if (listClients && listClients.result) {
+          props.handleGetListCusTomer &&
+            props.handleGetListCusTomer(listClients.result);
+        }
+      } else {
+        await Toast.fire({
+          icon: "error",
+          title: `${result.response.data.error.message}`,
+          background: "#51a351"
+        });
+      }
+    }
+  };
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleChange = (e: unknown) => {};
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDataModalClient({
+      ...dataModalClient,
+      [e.target.name]: e.target.value
+    });
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleGetDataModalTask = () => {};
@@ -324,13 +358,15 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
           }
         )}
       </Grid>
-      <ModalTask
+      <ModalCreateNew
+        isClient={true}
         isOpen={isShowModalClient}
         handleIsOpen={handleShowModalClient}
         handleSubmit={handleSubmit}
         handleChange={(e) => handleChange(e)}
-        dataItemTaskProp={dataModalTask}
+        dataItemTaskProp={dataModalClient}
         handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
+        disable={dataModalClient?.name && dataModalClient?.code ? false : true}
       />
     </Grid>
   );
