@@ -7,13 +7,7 @@ export interface TypeDataModalProject {
   note: null;
   projectType: number;
   customerId: number;
-  tasks: [
-    {
-      taskId: number;
-      billable: boolean;
-      id: number;
-    }
-  ];
+  tasks: { taskId: number; billable: boolean; id?: number }[] | undefined;
   users: [
     {
       userId: number;
