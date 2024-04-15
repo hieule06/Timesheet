@@ -76,3 +76,12 @@
 .ant-col.ant-col-8.ant-form-item-label.css-dev-only-do-not-override-42nv3w {
   text-align: unset;
 }
+
+// Css cho z-index cho toast
+.swal2-popup.swal2-toast.colored-toast.swal2-icon-error.swal2-show {
+  z-index: 99;
+}
+
+.MuiDialog-root.wrapper-dialog-project.MuiModal-root.css-zw3mfo-MuiModal-root-MuiDialog-root {
+  z-index: 90;
+}

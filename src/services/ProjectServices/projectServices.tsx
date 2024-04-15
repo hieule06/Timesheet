@@ -91,3 +91,27 @@ export const createOrUpdateProject = async (
     throw error;
   }
 };
+
+export const getAllBranch = async () => {
+  try {
+    const response = await axiosClient.get(
+      "/api/services/app/Branch/GetAllBranchFilter?isAll=true"
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
+  }
+};
+
+export const getQuantityProject = async () => {
+  try {
+    const response = await axiosClient.get(
+      "/api/services/app/Project/GetQuantityProject"
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error;
+  }
+};

@@ -21,6 +21,8 @@ import {
 } from "../../../constants/project/TypeBtnModalGeneral";
 import { TypeListCustomer } from "../../../type/TypeListCustomer";
 import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
+import ModalTask from "../../ModalTask/ModalTask";
+import { DataItemTaskProp } from "../../../type/DataItemTaskProp";
 
 interface ModalGeneralProps {
   dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
@@ -31,6 +33,11 @@ interface ModalGeneralProps {
 }
 
 export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
+  const [isShowModalClient, setIsShowModalClient] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [dataModalTask, setDataModalTask] = useState<
+    Partial<DataItemTaskProp> | undefined
+  >(undefined);
   const containsText = (option: TypeListCustomer, searchText: string) =>
     `${option.name} - [${option.code}]`
       .toLowerCase()
@@ -47,6 +54,18 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
       ),
     [searchText]
   );
+
+  const handleShowModalClient = () => {
+    setIsShowModalClient(!isShowModalClient);
+  };
+
+  const handleSubmit = async () => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleChange = (e: unknown) => {};
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleGetDataModalTask = () => {};
 
   return (
     <Grid
@@ -104,7 +123,9 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
         <button
           type="button"
           className="flex items-center text-sm font-semibold bg-red-500 text-white px-4 py-2 ml-[10px] shadow-md rounded-md transform transition duration-300 hover:bg-red-600"
-          onClick={() => {}}
+          onClick={() => {
+            handleShowModalClient();
+          }}
         >
           <FontAwesomeIcon
             className="space-y-2 mr-1 text-lg line-height-36 padding-x-16"
@@ -158,9 +179,14 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DemoContainer components={["DatePicker", "DatePicker"]}>
             <DatePicker
-              defaultValue={dayjs(
+              defaultValue={
                 props.dataItemProjectProp && props.dataItemProjectProp.timeStart
-              )}
+                  ? dayjs(
+                      props.dataItemProjectProp &&
+                        props.dataItemProjectProp.timeStart
+                    )
+                  : undefined
+              }
               onChange={(e) =>
                 props.handleGetDataModalProject({
                   ...props.dataItemProjectProp,
@@ -257,22 +283,31 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
                     width: "100%",
                     marginRight: "20px",
                     marginBottom: "20px",
-                    color:
-                      projectType.projectType ===
-                      props.dataItemProjectProp?.projectType
-                        ? "white"
-                        : "black",
-                    backgroundColor:
-                      projectType.projectType ===
-                      props.dataItemProjectProp?.projectType
-                        ? "#F36C00"
-                        : undefined,
-                    "&:hover": {
-                      bgcolor:
-                        projectType.projectType ===
+                    color: props.dataItemProjectProp?.projectType
+                      ? projectType.projectType ===
                         props.dataItemProjectProp?.projectType
+                        ? "white"
+                        : "black"
+                      : projectType.projectType === 1
+                      ? "white"
+                      : "black",
+                    backgroundColor: props.dataItemProjectProp?.projectType
+                      ? projectType.projectType ===
+                        props.dataItemProjectProp?.projectType
+                        ? "#F36C00"
+                        : undefined
+                      : projectType.projectType === 1
+                      ? "#F36C00"
+                      : undefined,
+                    "&:hover": {
+                      bgcolor: props.dataItemProjectProp?.projectType
+                        ? projectType.projectType ===
+                          props.dataItemProjectProp?.projectType
                           ? "#F36C00"
                           : undefined
+                        : projectType.projectType === 1
+                        ? "#F36C00"
+                        : undefined
                     }
                   }}
                   onClick={() =>
@@ -289,6 +324,14 @@ export const ModalGeneral: React.FC<ModalGeneralProps> = (props) => {
           }
         )}
       </Grid>
+      <ModalTask
+        isOpen={isShowModalClient}
+        handleIsOpen={handleShowModalClient}
+        handleSubmit={handleSubmit}
+        handleChange={(e) => handleChange(e)}
+        dataItemTaskProp={dataModalTask}
+        handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
+      />
     </Grid>
   );
 };

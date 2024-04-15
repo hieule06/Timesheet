@@ -6,12 +6,14 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import {
   Box,
   Checkbox,
+  FormControl,
   FormControlLabel,
   InputAdornment,
   ListSubheader,
   MenuItem,
   Paper,
   Select,
+  SelectChangeEvent,
   Table,
   TableBody,
   TableCell,
@@ -21,7 +23,7 @@ import {
 } from "@mui/material";
 import Visibility from "@mui/icons-material/Visibility";
 import SearchIcon from "@mui/icons-material/Search";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import "./ModalTeam.scss";
 import { ButtonControl } from "../../Button/Button";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -29,6 +31,8 @@ import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
 import { TypeDataUser } from "../../../type/TypeDataUser";
 import ClearIcon from "@mui/icons-material/Clear";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import { getAllBranch } from "../../../services/ProjectServices/projectServices";
+import { ListJobPosition } from "../../../constants/jobPosition/ListJobPosition";
 
 interface ModalTeamProps {
   dataItemProjectProp: Partial<TypeDataModalProject> | undefined;
@@ -44,6 +48,14 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
   const [isOnFocusSearchUser, setIsOnFocusSearchUser] =
     useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
+  const [searchValueAllUser, setSearchValueAllUser] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [listUserJoinedProject, setListUserJoinedProject] = useState<any>(
+    props.dataItemProjectProp?.users
+  );
+  const [allBranchFilter, setAllBranchFilter] = useState([]);
+  // const [searchUserProjected, setSearchUserProjected] = useState("");
+  // const [searchUserNotProjected, setSearchUserNotProjected] = useState("");
 
   const handleOnFocus = () => {
     setIsOnFocus(!isOnFocus);
@@ -53,35 +65,77 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
     setIsOnFocusSearchUser(!isOnFocusSearchUser);
   };
 
-  const containsText = (text: string, searchText: string) =>
-    text.toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+  const checkValueSearch = (text: string, searchText: string) =>
+    searchText
+      ? text.toLowerCase().indexOf(searchText.toLowerCase()) > -1
+      : true;
 
-  const allOptions = [
-    "Option One",
-    "Option Two",
-    "Option Three",
-    "Option Four"
-  ];
+  const checkValueSearchAllUser = (text: string, searchText: string) =>
+    searchText
+      ? text.toLowerCase().indexOf(searchText.toLowerCase()) > -1
+      : true;
 
-  const [selectedOption, setSelectedOption] = useState(allOptions[0]);
+  /* const filterUserProjected = useMemo(() => {
+    if (!props.dataItemProjectProp?.users) return [];
+    return props.dataItemProjectProp?.users.filter((row) =>
+      props.dataListUserNotPagging?.filter((item) => {
+        (row.userId === item.id &&
+          checkValueSearch(item.name, searchUserProjected)) ||
+          checkValueSearch(item.emailAddress, searchUserProjected);
+      })
+    );
+  }, [props.dataListUserNotPagging, searchUserProjected]);
+  console.log("first: ", filterUserProjected);
+  const filterUserNotProjected = useMemo(() => {}, [searchUserNotProjected]); */
+
+  const [selectedOption, setSelectedOption] = useState(0);
 
   const [searchText, setSearchText] = useState("");
   const displayedOptions = useMemo(
-    () => allOptions.filter((option) => containsText(option, searchText)),
-    [searchText]
+    () =>
+      allBranchFilter.filter((option) =>
+        checkValueSearch(option.name, searchText)
+      ),
+    [searchText, allBranchFilter]
   );
-  function createData(name: string, calories: number) {
-    return { name, calories, checked: false };
-  }
 
-  const rows = [
-    createData("Frozen yoghurt", 159),
-    createData("Ice cream sandwich", 237),
-    createData("Eclair", 262),
-    createData("Cupcake", 305),
-    createData("Gingerbread", 356)
-  ];
-  const [data] = useState(rows);
+  const [selectTypePosition, setSelectTypePosition] = useState(3);
+
+  const handleDeleteUser = (user: TypeDataUser) => {
+    const listUser = listUserJoinedProject?.filter(
+      (itemUser: { userId: number }) => itemUser.userId !== user.id
+    );
+    setListUserJoinedProject(listUser);
+    props.handleGetDataModalProject({
+      ...props.dataItemProjectProp,
+      users: listUser
+    });
+  };
+
+  const handleChangeUserIntoPrj = (user: TypeDataUser) => {
+    const dataUserAdd = {
+      userId: user.id,
+      type: 0,
+      isTemp: false
+    };
+    const listUser = [...listUserJoinedProject, dataUserAdd];
+    setListUserJoinedProject(listUser);
+    props.handleGetDataModalProject({
+      ...props.dataItemProjectProp,
+      users: listUser
+    });
+  };
+
+  const loadBranch = useCallback(async () => {
+    const listAllBranch = await getAllBranch();
+    if (listAllBranch && listAllBranch.result) {
+      setAllBranchFilter(listAllBranch.result);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadBranch();
+  }, [loadBranch]);
 
   return (
     <div className="flex">
@@ -123,7 +177,6 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
             />
           </Box>
           <TextField
-            className=""
             label={
               <span style={{ letterSpacing: "1px" }}>Search by task name</span>
             }
@@ -136,7 +189,7 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
               )
             }}
             InputLabelProps={{
-              shrink: isOnFocus || !!searchValue,
+              shrink: !!searchValue,
               style: { marginLeft: 30 }
             }}
             value={searchValue}
@@ -168,7 +221,11 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
                 {props.dataItemProjectProp?.users?.map((row, index) =>
                   props.dataListUserNotPagging?.map(
                     (item) =>
-                      row.userId === item.id && (
+                      row.userId === item.id &&
+                      checkValueSearch(
+                        `${item.name} ${item.emailAddress}`,
+                        searchValue
+                      ) && (
                         <TableRow
                           key={row.id}
                           className={
@@ -183,23 +240,27 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
                         >
                           <TableCell sx={{ width: "50%" }}>
                             <div className="flex">
-                              <ClearIcon
-                                sx={{
-                                  marginRight: 2,
-                                  cursor: "pointer"
-                                }}
-                              />
+                              <span onClick={() => handleDeleteUser(item)}>
+                                <ClearIcon
+                                  sx={{
+                                    marginRight: 2,
+                                    cursor: "pointer"
+                                  }}
+                                />
+                              </span>
                               <div className="flex flex-col">
                                 <p className="text-sx font-bold">{item.name}</p>
                                 <p className="text-sx">{item.emailAddress}</p>
                               </div>
                               <div className="w-[100%]">
-                                <ArrowForwardIosIcon
-                                  sx={{
-                                    cursor: "pointer",
-                                    float: "right"
-                                  }}
-                                />
+                                <span onClick={() => handleDeleteUser(item)}>
+                                  <ArrowForwardIosIcon
+                                    sx={{
+                                      cursor: "pointer",
+                                      float: "right"
+                                    }}
+                                  />
+                                </span>
                               </div>
                             </div>
                           </TableCell>
@@ -234,67 +295,68 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
         </AccordionSummary>
         <AccordionDetails>
           <Box sx={{ marginBottom: "10px" }}>
-            <Select
-              MenuProps={{ autoFocus: false }}
-              id="search-select"
-              value={selectedOption}
-              onChange={(e) => setSelectedOption(e.target.value)}
-              onClose={() => setSearchText("")}
-              renderValue={() => selectedOption}
-              fullWidth
-              className="mr-10 mb-3"
-            >
-              <ListSubheader>
-                <TextField
-                  size="small"
-                  autoFocus
-                  placeholder="Type to search..."
-                  fullWidth
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    )
-                  }}
-                  onChange={(e) => setSearchText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key !== "Escape") {
-                      e.stopPropagation();
-                    }
-                  }}
-                />
-              </ListSubheader>
-              {displayedOptions.map((option, i) => (
-                <MenuItem
-                  key={i}
-                  value={option}
-                  sx={{ fontSize: "14px !important" }}
-                >
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
-            <Select
-              MenuProps={{ autoFocus: false }}
-              id="search-select2"
-              value={selectedOption}
-              onChange={(e) => setSelectedOption(e.target.value)}
-              onClose={() => setSearchText("")}
-              renderValue={() => selectedOption}
-              fullWidth
-              className="mr-10"
-            >
-              {displayedOptions.map((option, i) => (
-                <MenuItem
-                  key={i}
-                  value={option}
-                  sx={{ fontSize: "14px !important" }}
-                >
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
+            <FormControl variant="standard" sx={{ m: 1 }} fullWidth>
+              <Select
+                MenuProps={{ autoFocus: false }}
+                id="search-select"
+                value={selectedOption}
+                onChange={(e) => setSelectedOption(e.target.value as number)}
+                onClose={() => setSearchText("")}
+                fullWidth
+                className="mr-10 mb-3"
+              >
+                <ListSubheader>
+                  <TextField
+                    size="small"
+                    autoFocus
+                    placeholder="Type to search..."
+                    fullWidth
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <SearchIcon />
+                        </InputAdornment>
+                      )
+                    }}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key !== "Escape") {
+                        e.stopPropagation();
+                      }
+                    }}
+                  />
+                </ListSubheader>
+                {displayedOptions.map((option, i) => (
+                  <MenuItem
+                    key={i}
+                    value={option?.id}
+                    sx={{ fontSize: "14px !important" }}
+                  >
+                    {option?.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl variant="standard" sx={{ m: 1 }} fullWidth>
+              <Select
+                id="search-select2"
+                value={selectTypePosition}
+                onChange={(e) =>
+                  setSelectTypePosition(e.target.value as number)
+                }
+                fullWidth
+              >
+                {ListJobPosition.map((option, i) => (
+                  <MenuItem
+                    key={i}
+                    value={option.type}
+                    sx={{ fontSize: "14px !important" }}
+                  >
+                    {option.title}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
           <TextField
             label={
@@ -312,8 +374,8 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
               shrink: isOnFocusSearchUser || !!searchValue,
               style: { marginLeft: 30 }
             }}
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
+            value={searchValueAllUser}
+            onChange={(e) => setSearchValueAllUser(e.target.value)}
             onFocus={handleOnFocusSearchUser}
             onBlur={handleOnFocusSearchUser}
           />
@@ -332,7 +394,12 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
                     (row, index) =>
                       props.dataItemProjectProp?.users?.every(
                         (item) => item.userId !== row.id
-                      ) && (
+                      ) &&
+                      checkValueSearchAllUser(
+                        `${row.name} ${row.emailAddress}`,
+                        searchValueAllUser
+                      ) &&
+                      row.isActive && (
                         <TableRow
                           key={row.id}
                           className={
@@ -342,19 +409,40 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
                           }
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
-                            "&:hover": { backgroundColor: "#f5f5f5" }
+                            "&:hover": { backgroundColor: "#f5f5f5" },
+                            display: row.branchId
+                              ? selectedOption === 0 && selectTypePosition === 3
+                                ? "block"
+                                : selectedOption === row.branchId &&
+                                  selectTypePosition === 3
+                                ? "block"
+                                : selectedOption === 0 &&
+                                  selectTypePosition === row.type
+                                ? "block"
+                                : selectedOption === row.branchId &&
+                                  selectTypePosition === row.type
+                                ? "block"
+                                : "none"
+                              : "none"
                           }}
                         >
                           <TableCell sx={{ width: "50%" }}>
                             <div className="flex">
-                              <ArrowBackIosIcon
-                                sx={{
-                                  marginRight: 2,
-                                  cursor: "pointer"
-                                }}
-                              />
+                              <span
+                                onClick={() => handleChangeUserIntoPrj(row)}
+                              >
+                                <ArrowBackIosIcon
+                                  sx={{
+                                    marginRight: 2,
+                                    cursor: "pointer"
+                                  }}
+                                />
+                              </span>
                               <div className="flex flex-col">
-                                <p className="text-sx font-bold">{row.name}</p>
+                                <p className="text-sx font-bold">
+                                  {row.name}
+                                  <span></span>
+                                </p>
                                 <p className="text-sx">{row.emailAddress}</p>
                               </div>
                             </div>
