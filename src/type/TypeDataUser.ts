@@ -11,7 +11,7 @@ export interface TypeDataUser {
   branch: number;
   branchColor: string | null;
   branchDisplayName: string | null;
-  branchId: string | null;
+  branchId: number;
   positionId: number;
   positionName: string;
   id: number;
