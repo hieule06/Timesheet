@@ -23,6 +23,7 @@ import { DataItemTaskProp } from "../../type/DataItemTaskProp";
 import { DataItemProjectProp } from "../../type/DataItemProjectProp";
 import { TypeDataUser } from "../../type/TypeDataUser";
 import { createOrUpdateProject } from "../../services/ProjectServices/projectServices";
+import { Toast } from "../toast/Toast";
 
 interface ModalProjectProps {
   handleIsOpenModal: () => void;
@@ -64,6 +65,34 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
+  };
+
+  const handleSave = async () => {
+    // console.log("first: ", props.dataItemProjectProp);
+    try {
+      const result = await createOrUpdateProject(props.dataItemProjectProp);
+      if (result && result.success) {
+        props.handleIsCloseModal();
+        await Toast.fire({
+          icon: "success",
+          title: "Update Project Successfully",
+          background: "#51a351"
+        });
+        setValue(0);
+      } else {
+        await Toast.fire({
+          icon: "error",
+          title: `${result.response.data.error.message}`,
+          background: "#bd362f"
+        });
+      }
+    } catch (error) {
+      await Toast.fire({
+        icon: "error",
+        title: `${error?.response?.data?.error?.message}`,
+        background: "#bd362f"
+      });
+    }
   };
 
   return (
@@ -159,15 +188,13 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
         <DialogActions className="left-0 bg-white">
           <ButtonControl
             title={TITLE_BUTTON.CANCEL}
-            handleClick={() => {}}
+            handleClick={props.handleIsCloseModal}
             dataItem={undefined}
           />
           <ButtonControl
             title={TITLE_BUTTON.SAVE}
-            dataItem={undefined}
-            handleClick={async () => {
-              await createOrUpdateProject(props.dataItemProjectProp);
-            }}
+            dataItem={props.dataItemProjectProp}
+            handleClick={handleSave}
           />
         </DialogActions>
       </Dialog>
