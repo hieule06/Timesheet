@@ -29,11 +29,24 @@ interface ModalTaskPrjProps {
 }
 
 export const ModalTaskPrj: React.FC<ModalTaskPrjProps> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const arrTask: any[] | (() => any[]) = [];
+  props.dataListTask &&
+    props.dataListTask.map(
+      (item) =>
+        item.type === 0 && arrTask.push({ taskId: item.id, billable: true })
+    );
   const [taskSelected, setTaskSelected] = React.useState(
     props.dataItemProjectProp?.tasks
+      ? props.dataItemProjectProp?.tasks
+      : arrTask
   );
   const [selectAll, setSelectAll] = React.useState<boolean>(
-    !!props.dataItemProjectProp?.tasks?.every((item) => item && item.billable)
+    props.dataItemProjectProp?.tasks
+      ? !!props.dataItemProjectProp?.tasks?.every(
+          (item) => item && item.billable
+        )
+      : true
   );
 
   const handleCheckboxChange = (taskId: number, checked: boolean) => {

@@ -24,6 +24,7 @@ import { DataItemProjectProp } from "../../type/DataItemProjectProp";
 import { TypeDataUser } from "../../type/TypeDataUser";
 import { createOrUpdateProject } from "../../services/ProjectServices/projectServices";
 import { Toast } from "../toast/Toast";
+import { ModalConfirm } from "../ModalConfirm/ModalConfirm";
 
 interface ModalProjectProps {
   handleIsOpenModal: () => void;
@@ -36,6 +37,8 @@ interface ModalProjectProps {
   handleGetDataModalProject: (
     item: Partial<TypeDataModalProject> | undefined
   ) => void;
+  handleIsOnKeyDown: () => void;
+  handleGetListCusTomer?: (listCustomer: TypeListCustomer[]) => void;
 }
 
 interface TabPanelProps {
@@ -67,24 +70,55 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
     setValue(newValue);
   };
 
+  const handleCancel = () => {
+    props.handleGetDataModalProject(undefined);
+    props.handleIsCloseModal();
+  };
+
   const handleSave = async () => {
-    // console.log("first: ", props.dataItemProjectProp);
     try {
-      const result = await createOrUpdateProject(props.dataItemProjectProp);
-      if (result && result.success) {
-        props.handleIsCloseModal();
-        await Toast.fire({
-          icon: "success",
-          title: "Update Project Successfully",
-          background: "#51a351"
-        });
-        setValue(0);
+      const arrTask: { taskId: number; billable: boolean }[] | undefined = [];
+      props.dataItemProjectProp?.tasks
+        ? props.dataItemProjectProp?.tasks
+        : props.dataListTask &&
+          props.dataListTask.map(
+            (item) =>
+              item.type === 0 &&
+              arrTask.push({ taskId: item.id, billable: true })
+          );
+      if (!props.dataItemProjectProp?.users) {
+        ModalConfirm(`Project must have at least one member!`, undefined);
       } else {
-        await Toast.fire({
-          icon: "error",
-          title: `${result.response.data.error.message}`,
-          background: "#bd362f"
-        });
+        const result = await createOrUpdateProject(
+          props.dataItemProjectProp?.projectType
+            ? props.dataItemProjectProp
+            : {
+                ...props.dataItemProjectProp,
+                projectType: 1,
+                projectTargetUsers: [],
+                tasks:
+                  arrTask.length > 0
+                    ? arrTask
+                    : props.dataItemProjectProp?.tasks
+              }
+        );
+        if (result && result.success) {
+          props.handleIsCloseModal();
+          await Toast.fire({
+            icon: "success",
+            title: "Update Project Successfully",
+            background: "#51a351"
+          });
+          props.handleIsOnKeyDown();
+          setValue(0); // trở về modal tab general
+          props.handleGetDataModalProject(undefined);
+        } else {
+          await Toast.fire({
+            icon: "error",
+            title: `${result.response.data.error.message}`,
+            background: "#bd362f"
+          });
+        }
       }
     } catch (error) {
       await Toast.fire({
@@ -162,6 +196,10 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
               handleGetDataModalProject={(
                 item: Partial<DataItemProjectProp> | undefined
               ) => props.handleGetDataModalProject(item)}
+              handleGetListCusTomer={(listCustomer) =>
+                props.handleGetListCusTomer &&
+                props.handleGetListCusTomer(listCustomer)
+              }
             />
           </TabPanel>
 
@@ -188,13 +226,19 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
         <DialogActions className="left-0 bg-white">
           <ButtonControl
             title={TITLE_BUTTON.CANCEL}
-            handleClick={props.handleIsCloseModal}
+            handleClick={handleCancel}
             dataItem={undefined}
           />
           <ButtonControl
             title={TITLE_BUTTON.SAVE}
-            dataItem={props.dataItemProjectProp}
             handleClick={handleSave}
+            disabled={
+              props.dataItemProjectProp?.customerId &&
+              props.dataItemProjectProp?.name &&
+              props.dataItemProjectProp?.code
+                ? false
+                : true
+            }
           />
         </DialogActions>
       </Dialog>

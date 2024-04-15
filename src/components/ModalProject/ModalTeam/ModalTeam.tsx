@@ -13,7 +13,6 @@ import {
   MenuItem,
   Paper,
   Select,
-  SelectChangeEvent,
   Table,
   TableBody,
   TableCell,
@@ -54,8 +53,6 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
     props.dataItemProjectProp?.users
   );
   const [allBranchFilter, setAllBranchFilter] = useState([]);
-  // const [searchUserProjected, setSearchUserProjected] = useState("");
-  // const [searchUserNotProjected, setSearchUserNotProjected] = useState("");
 
   const handleOnFocus = () => {
     setIsOnFocus(!isOnFocus);
@@ -74,19 +71,6 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
     searchText
       ? text.toLowerCase().indexOf(searchText.toLowerCase()) > -1
       : true;
-
-  /* const filterUserProjected = useMemo(() => {
-    if (!props.dataItemProjectProp?.users) return [];
-    return props.dataItemProjectProp?.users.filter((row) =>
-      props.dataListUserNotPagging?.filter((item) => {
-        (row.userId === item.id &&
-          checkValueSearch(item.name, searchUserProjected)) ||
-          checkValueSearch(item.emailAddress, searchUserProjected);
-      })
-    );
-  }, [props.dataListUserNotPagging, searchUserProjected]);
-  console.log("first: ", filterUserProjected);
-  const filterUserNotProjected = useMemo(() => {}, [searchUserNotProjected]); */
 
   const [selectedOption, setSelectedOption] = useState(0);
 
@@ -118,11 +102,16 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
       type: 0,
       isTemp: false
     };
-    const listUser = [...listUserJoinedProject, dataUserAdd];
+    const listUser =
+      listUserJoinedProject && listUserJoinedProject.length > 0
+        ? [...listUserJoinedProject, dataUserAdd]
+        : [dataUserAdd];
     setListUserJoinedProject(listUser);
     props.handleGetDataModalProject({
       ...props.dataItemProjectProp,
-      users: listUser
+      users: listUser.map((item, idx) =>
+        idx === 0 ? { ...item, type: 1 } : item
+      )
     });
   };
 
@@ -392,9 +381,11 @@ export const ModalTeam: React.FC<ModalTeamProps> = (props) => {
                 {props.dataListUserNotPagging &&
                   props.dataListUserNotPagging.map(
                     (row, index) =>
-                      props.dataItemProjectProp?.users?.every(
-                        (item) => item.userId !== row.id
-                      ) &&
+                      (props.dataItemProjectProp?.users
+                        ? props.dataItemProjectProp?.users?.every(
+                            (item) => item.userId !== row.id
+                          )
+                        : true) &&
                       checkValueSearchAllUser(
                         `${row.name} ${row.emailAddress}`,
                         searchValueAllUser

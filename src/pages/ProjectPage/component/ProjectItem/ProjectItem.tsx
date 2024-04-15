@@ -28,7 +28,7 @@ export const ProjectItem: React.FC<ProjectItemProps> = (props) => {
   return (
     <React.Fragment>
       <tr className="flex justify-between items-center bg-white border-b">
-        <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
+        <th className="flex flex-wrap mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap ">
           <b className="text-sm text-[#555] font-normal">
             {props.dataItemProject.name}
           </b>

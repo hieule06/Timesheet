@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useState } from "react";
 import "./TaskPage.scss";
 import { TaskList } from "./component/TaskList/TaskList";
-import ModalTask from "../../components/ModalTask/ModalTask";
+import ModalTask from "../../components/ModalTask/ModalCreateNew";
 import { HeaderContainer } from "../../components/HeaderContainer/HeaderContainer";
 import { HeaderControlPage } from "../../components/HeaderControlPage/HeaderControlPage";
 import { DataItemTaskProp } from "../../type/DataItemTaskProp";
@@ -119,6 +119,7 @@ const TaskPage = () => {
             handleChange={(e) => handleChange(e)}
             dataItemTaskProp={dataModalTask}
             handleGetDataModalTask={(item) => handleGetDataModalTask(item)}
+            disable={dataModalTask?.name ? false : true}
           />
         </div>
       </div>

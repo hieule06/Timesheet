@@ -104,7 +104,7 @@ export const TaskItem: React.FC<TaskItemProps> = (props) => {
   return (
     <>
       <tr className="flex justify-between items-center odd:bg-gray-50 odd:dark:bg-gray-800 even:bg-white even:dark:bg-gray-900 border-b dark:border-gray-700 hover:bg-[#f5f5f5]">
-        <th className="mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap dark:text-white">
+        <th className="flex flex-wrap mx-[5px] px-[5px] py-[10px] font-medium text-gray-900 whitespace-nowrap dark:text-white">
           <ButtonControl
             handleClick={(taskItem) => {
               props.handleIsOpen(), props.handleGetDataModalTask(taskItem);

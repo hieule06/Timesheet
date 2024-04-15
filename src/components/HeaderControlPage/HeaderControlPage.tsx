@@ -21,22 +21,22 @@ import { getUserNotPagging } from "../../services/User/userService";
 
 interface HeaderControlPageProps {
   searchValue: string;
-  statusProject: string;
+  statusProject?: string;
   isOnKeyDown: boolean;
   handleIsOpen: () => void;
   setSearchValue: React.Dispatch<React.SetStateAction<string>>;
-  setStatusProject: React.Dispatch<React.SetStateAction<string>>;
+  setStatusProject?: React.Dispatch<React.SetStateAction<string>>;
   isShowControlProject: boolean;
-  handleIsOpenModal: () => void;
-  handleIsCloseModal: () => void;
+  handleIsOpenModal?: () => void;
+  handleIsCloseModal?: () => void;
   setIsOnKeyDown: React.Dispatch<React.SetStateAction<boolean>>;
-  isOpenModal: boolean;
-  handleGetDataModalProject: (
+  isOpenModal?: boolean;
+  handleGetDataModalProject?: (
     item: Partial<TypeDataModalProject> | undefined
   ) => void;
-  handleGetListCusTomer: (listCustomer: TypeListCustomer[]) => void;
-  handleGetListTaskPrj: (listTask: DataItemTaskProp[] | undefined) => void;
-  handleGetListUserNotPagging: (
+  handleGetListCusTomer?: (listCustomer: TypeListCustomer[]) => void;
+  handleGetListTaskPrj?: (listTask: DataItemTaskProp[] | undefined) => void;
+  handleGetListUserNotPagging?: (
     listUserNotPagging: TypeDataUser[] | undefined
   ) => void;
 }
@@ -57,7 +57,7 @@ export const HeaderControlPage: React.FC<HeaderControlPageProps> = (props) => {
   };
 
   const handleChange = (event: SelectChangeEvent) => {
-    props.setStatusProject(event.target.value);
+    props.setStatusProject && props.setStatusProject(event.target.value);
   };
 
   const loadQuantityProject = React.useCallback(async () => {
@@ -84,18 +84,23 @@ export const HeaderControlPage: React.FC<HeaderControlPageProps> = (props) => {
               type="button"
               className="flex items-center justify-center h-[50px] min-w-[170px] text-sm font-semibold bg-red-500 text-white px-4 py-2 ml-[10px] shadow-md rounded-md transform transition duration-300 hover:bg-red-600"
               onClick={async () => {
-                const listClients = await getAllClients();
-                if (listClients && listClients.result) {
-                  props.handleGetListCusTomer(listClients.result);
-                }
-                props.handleIsOpenModal();
                 const listTask = await getAllTasks();
                 if (listTask && listTask.result) {
-                  props.handleGetListTaskPrj(listTask.result);
+                  props.handleGetListTaskPrj &&
+                    props.handleGetListTaskPrj(listTask.result);
                 }
+                const listClients = await getAllClients();
+                if (listClients && listClients.result) {
+                  props.handleGetListCusTomer &&
+                    props.handleGetListCusTomer(listClients.result);
+                }
+                props.handleIsOpenModal && props.handleIsOpenModal();
                 const listUserNotPagging = await getUserNotPagging();
                 if (listUserNotPagging && listUserNotPagging.result) {
-                  props.handleGetListUserNotPagging(listUserNotPagging.result);
+                  props.handleGetListUserNotPagging &&
+                    props.handleGetListUserNotPagging(
+                      listUserNotPagging.result
+                    );
                 }
               }}
             >
@@ -123,13 +128,17 @@ export const HeaderControlPage: React.FC<HeaderControlPageProps> = (props) => {
                 >
                   {statusProject.title}{" "}
                   {index < 2
-                    ? listQuantityProject.length > 0 &&
-                      listQuantityProject[index]?.quantity &&
-                      `(${listQuantityProject[index].quantity})`
-                    : listQuantityProject.length > 0 &&
-                      `(${
-                        listQuantityProject[0].quantity +
-                        listQuantityProject[1].quantity
+                    ? `(${
+                        listQuantityProject[
+                          listQuantityProject[index] &&
+                            listQuantityProject[index].status
+                        ]?.quantity || 0
+                      })`
+                    : `(${
+                        listQuantityProject[0] || listQuantityProject[1]
+                          ? (listQuantityProject[0].quantity || 0) +
+                            (listQuantityProject[1].quantity || 0)
+                          : ""
                       })`}
                 </MenuItem>
               ))}

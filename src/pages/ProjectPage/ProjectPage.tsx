@@ -96,6 +96,21 @@ const ProjectPage = () => {
                 setStatusProject(prev)
               }
               isShowControlProject={true}
+              handleIsOpenModal={handleIsOpenModal}
+              handleIsCloseModal={handleIsCloseModal}
+              isOpenModal={isOpenModal}
+              handleGetDataModalProject={(
+                item: Partial<TypeDataModalProject> | undefined
+              ) => handleGetDataModalProject(item)}
+              handleGetListCusTomer={(listCustomer) =>
+                handleGetListCusTomer(listCustomer)
+              }
+              handleGetListTaskPrj={(listTask) =>
+                handleGetListTaskPrj(listTask)
+              }
+              handleGetListUserNotPagging={(listUserNotPagging) =>
+                handleGetListUserNotPagging(listUserNotPagging)
+              }
             />
             <ProjectList
               handleIsOpenModal={handleIsOpenModal}
@@ -134,6 +149,10 @@ const ProjectPage = () => {
         handleGetDataModalProject={(
           item: Partial<DataItemProjectProp> | undefined
         ) => handleGetDataModalProject(item)}
+        handleIsOnKeyDown={() => setIsOnKeyDown(!isOnKeyDown)}
+        handleGetListCusTomer={(listCustomer) =>
+          handleGetListCusTomer(listCustomer)
+        }
       />
     </div>
   );
