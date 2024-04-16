@@ -25,6 +25,7 @@ import { TypeDataUser } from "../../type/TypeDataUser";
 import { createOrUpdateProject } from "../../services/ProjectServices/projectServices";
 import { Toast } from "../toast/Toast";
 import { ModalConfirm } from "../ModalConfirm/ModalConfirm";
+import { ArrayTabPanel } from "../../constants/project/ListTabPanel";
 
 interface ModalProjectProps {
   handleIsOpenModal: () => void;
@@ -73,6 +74,7 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
   const handleCancel = () => {
     props.handleGetDataModalProject(undefined);
     props.handleIsCloseModal();
+    setValue(0); // trở về modal tab general
   };
 
   const handleSave = async () => {
@@ -175,18 +177,12 @@ export const ModalProject: React.FC<ModalProjectProps> = (props) => {
               aria-label="action tabs example"
               className="pt-5 bg-white"
             >
-              <Tab
-                sx={{ maxWidth: "180px" }}
-                label={<span className="normal-case font-medium">General</span>}
-              />
-              <Tab
-                sx={{ maxWidth: "180px" }}
-                label={<span className="normal-case font-medium">Team</span>}
-              />
-              <Tab
-                sx={{ maxWidth: "180px" }}
-                label={<span className="normal-case font-medium">Tasks</span>}
-              />
+              {ArrayTabPanel.map((tab) => (
+                <Tab
+                  sx={{ maxWidth: "180px" }}
+                  label={<span className="normal-case font-medium">{tab}</span>}
+                />
+              ))}
             </Tabs>
           </AppBar>
           <TabPanel value={value} index={0}>

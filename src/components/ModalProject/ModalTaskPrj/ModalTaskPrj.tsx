@@ -6,19 +6,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Checkbox
-} from "@mui/material";
+import { Checkbox } from "@mui/material";
 import "./ModalTaskPrj.scss";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import ClearIcon from "@mui/icons-material/Clear";
 import { DataItemTaskProp } from "../../../type/DataItemTaskProp";
 import { TypeDataModalProject } from "../../../type/TypeDataModalProject";
-import { ArrayTypeTask } from "../../../constants/task/ArrayTypeTask";
+import { SelectTaskInPrj } from "./SelectTaskInPrj/SelectTaskInPrj";
 
 interface ModalTaskPrjProps {
   dataListTask: DataItemTaskProp[] | undefined;
@@ -36,7 +29,14 @@ export const ModalTaskPrj: React.FC<ModalTaskPrjProps> = (props) => {
       (item) =>
         item.type === 0 && arrTask.push({ taskId: item.id, billable: true })
     );
-  const [taskSelected, setTaskSelected] = React.useState(
+  const [taskSelected, setTaskSelected] = React.useState<
+    | {
+        taskId: number;
+        billable: boolean;
+        id?: number | undefined;
+      }[]
+    | undefined
+  >(
     props.dataItemProjectProp?.tasks
       ? props.dataItemProjectProp?.tasks
       : arrTask
@@ -194,81 +194,13 @@ export const ModalTaskPrj: React.FC<ModalTaskPrjProps> = (props) => {
         </Table>
       </TableContainer>
 
-      <Accordion defaultExpanded className="mb-[30px]">
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel3-content"
-          id="panel3-header"
-          className="text-[15px]"
-        >
-          Select task
-        </AccordionSummary>
-        <AccordionDetails>
-          <TableContainer
-            component={Paper}
-            sx={{ marginBottom: "20px", marginTop: "1px !important" }}
-          >
-            <Table aria-label="simple table">
-              <TableBody>
-                {props.dataListTask &&
-                  props.dataListTask.map(
-                    (row, index) =>
-                      !row.isDeleted &&
-                      !taskSelected?.some(
-                        (item) => item && row.id === item.taskId
-                      ) && (
-                        <TableRow
-                          key={row.id}
-                          className={
-                            index % 2 === 0
-                              ? "bg-gray-50 dark:bg-gray-800"
-                              : "bg-white dark:bg-gray-900"
-                          }
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                            "&:hover": { backgroundColor: "#f5f5f5" }
-                          }}
-                        >
-                          <TableCell
-                            sx={{ width: "50%" }}
-                            component="th"
-                            scope="row"
-                            onClick={() => {
-                              const taskSelectedNew = {
-                                taskId: row.id,
-                                billable: true
-                              };
-                              setTaskSelected([
-                                ...taskSelected,
-                                taskSelectedNew
-                              ]);
-                              props.handleGetDataModalProject({
-                                ...props.dataItemProjectProp,
-                                tasks: [...taskSelected, taskSelectedNew]
-                              });
-                            }}
-                          >
-                            <AddCircleOutlineIcon
-                              sx={{
-                                marginRight: 2,
-                                cursor: "pointer"
-                              }}
-                            />
-                            {row.name}
-                          </TableCell>
-                          <TableCell sx={{ padding: 0 }}>
-                            {row.type === ArrayTypeTask[0].type
-                              ? ArrayTypeTask[0].titleTask
-                              : ArrayTypeTask[1].titleTask}
-                          </TableCell>
-                        </TableRow>
-                      )
-                  )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </AccordionDetails>
-      </Accordion>
+      <SelectTaskInPrj
+        dataListTask={props.dataListTask}
+        dataItemProjectProp={props.dataItemProjectProp}
+        handleGetDataModalProject={props.handleGetDataModalProject}
+        taskSelected={taskSelected}
+        handleSetTaskSelected={(data) => setTaskSelected(data)}
+      />
     </>
   );
 };

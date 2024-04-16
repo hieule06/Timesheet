@@ -43,7 +43,7 @@ interface ButtonActionProps {
 }
 
 export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null); // Biến mở tooltip của button action
 
   const handleClick = (event: {
     currentTarget: React.SetStateAction<null>;
@@ -54,6 +54,8 @@ export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const styleIcon = { marginRight: "16px", height: "48px", color: "#0000008A" };
 
   const handleDeActive = async () => {
     ModalConfirm(TITLE_TOAST.DEACTIVE, props.dataItemProject?.name).then(
@@ -136,6 +138,26 @@ export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
     handleClose();
   };
 
+  const handleEditItemProject = async () => {
+    const listClients = await getAllClients();
+    if (listClients && listClients.result) {
+      props.handleGetListCusTomer(listClients.result);
+    }
+    const dataItemProject = await getProjectsById(props.dataItemProject.id);
+    if (dataItemProject && dataItemProject.result) {
+      props.handleGetDataModalProject(dataItemProject.result);
+    }
+    handleClose(), props.handleIsOpenModal();
+    const listTask = await getAllTasks();
+    if (listTask && listTask.result) {
+      props.handleGetListTaskPrj(listTask.result);
+    }
+    const listUserNotPagging = await getUserNotPagging();
+    if (listUserNotPagging && listUserNotPagging.result) {
+      props.handleGetListUserNotPagging(listUserNotPagging.result);
+    }
+  };
+
   return (
     <th className="wrapper-btn-action">
       <Button
@@ -157,47 +179,18 @@ export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
         }}
         sx={{ padding: "0 16px" }}
       >
-        <MenuItem
-          onClick={async () => {
-            const listClients = await getAllClients();
-            if (listClients && listClients.result) {
-              props.handleGetListCusTomer(listClients.result);
-            }
-            const dataItemProject = await getProjectsById(
-              props.dataItemProject.id
-            );
-            if (dataItemProject && dataItemProject.result) {
-              props.handleGetDataModalProject(dataItemProject.result);
-            }
-            handleClose(), props.handleIsOpenModal();
-            const listTask = await getAllTasks();
-            if (listTask && listTask.result) {
-              props.handleGetListTaskPrj(listTask.result);
-            }
-            const listUserNotPagging = await getUserNotPagging();
-            if (listUserNotPagging && listUserNotPagging.result) {
-              props.handleGetListUserNotPagging(listUserNotPagging.result);
-            }
-          }}
-          sx={{ fontSize: "14px" }}
-        >
-          <EditIcon
-            sx={{ marginRight: "16px", height: "48px", color: "#0000008A" }}
-          />
+        <MenuItem onClick={handleEditItemProject} sx={{ fontSize: "14px" }}>
+          <EditIcon sx={styleIcon} />
           Edit
         </MenuItem>
         {props.dataItemProject.status === 1 ? (
           <MenuItem onClick={handleActive} sx={{ fontSize: "14px" }}>
-            <DoneIcon
-              sx={{ marginRight: "16px", height: "48px", color: "#0000008A" }}
-            />
+            <DoneIcon sx={styleIcon} />
             Active
           </MenuItem>
         ) : (
           <MenuItem onClick={handleDeActive} sx={{ fontSize: "14px" }}>
-            <ClearIcon
-              sx={{ marginRight: "16px", height: "48px", color: "#0000008A" }}
-            />
+            <ClearIcon sx={styleIcon} />
             Deactive
           </MenuItem>
         )}
@@ -205,9 +198,7 @@ export const ButtonAction: React.FC<ButtonActionProps> = (props) => {
           onClick={handleDelete}
           sx={{ fontSize: "14px", color: "#A94442" }}
         >
-          <DeleteIcon
-            sx={{ marginRight: "16px", height: "48px", color: "#0000008A" }}
-          />
+          <DeleteIcon sx={styleIcon} />
           Delete
         </MenuItem>
       </Menu>

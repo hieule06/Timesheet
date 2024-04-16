@@ -28,10 +28,6 @@ const ProjectPage = () => {
     setIsOpen(!isOpen);
   };
   const [isOpenModal, setIsOpenModal] = useState(false);
-  /* const [formData, setFormData] = useState({
-    name: "",
-    email: ""
-  }); */
 
   const handleIsOpenModal = () => {
     setIsOpenModal(true);
@@ -60,20 +56,6 @@ const ProjectPage = () => {
   ) => {
     setListUserNotPagging(listUserNotPagging);
   };
-
-  /* const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  }; */
-
-  /* const handleSubmit = () => {
-    // Xử lý dữ liệu biểu mẫu ở đây, ví dụ: gửi dữ liệu đến server
-    console.log(formData);
-    // Đóng dialog
-    handleIsOpen();
-  }; */
 
   return (
     <div>
